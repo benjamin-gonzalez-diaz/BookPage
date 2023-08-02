@@ -1,0 +1,12 @@
+html
+  head
+    title Tabla de Usuarios
+  body
+    table
+      tr
+        th id
+        th nombre
+      each user in users
+        tr
+          td= user.id
+          td= user.nombre

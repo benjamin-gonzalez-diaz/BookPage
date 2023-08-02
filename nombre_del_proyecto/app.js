@@ -1,9 +1,15 @@
 const express = require('express');
 const cassandra = require('cassandra-driver');
+const path = require('path');
 const app = express();
 const port = 3000;
 
 app.use(express.json());
+app.set('view engine', 'pug');
+app.set('views', './views');
+
+// Configuración para servir archivos estáticos desde la carpeta "public"
+app.use(express.static(path.join(__dirname, 'public')));
 
 // Configura la conexión a Cassandra
 const client = new cassandra.Client({ 
@@ -37,7 +43,7 @@ client.execute(createKeyspaceQuery, (err) => {
 });
 
 // Crea la tabla "usuarios" si no existe en el keyspace
-const createTableQuery = `
+const createTableQueryUsuarios = `
   CREATE TABLE IF NOT EXISTS mi_keyspace.usuarios (
     id UUID PRIMARY KEY,
     nombre TEXT,
@@ -45,26 +51,42 @@ const createTableQuery = `
   )
 `;
 
-client.execute(createTableQuery, (err) => {
+const createTableQueryUsuarios2 = `
+  CREATE TABLE IF NOT EXISTS mi_keyspace.usuarios2 (
+    id int PRIMARY KEY,
+    nombre TEXT
+  )
+`;
+
+client.execute(createTableQueryUsuarios, (err) => {
   if (err) {
-    console.error('Error al crear la tabla:', err);
+    console.error('Error al crear la tabla usuarios:', err);
   } else {
-    console.log('Tabla creada o ya existente');
+    console.log('Tabla usuarios creada o ya existente');
+    // Ahora ejecutas el query para la segunda tabla
+    client.execute(createTableQueryUsuarios2, (err) => {
+      if (err) {
+        console.error('Error al crear la tabla usuarios2:', err);
+      } else {
+        console.log('Tabla usuarios2 creada o ya existente');
+      }
+    });
   }
 });
+
 
 // Resto del código igual que antes
 
 // Ruta para crear un nuevo usuario
-app.post('/usuarios', (req, res) => {
-  const { id, nombre, email } = req.body;
+app.post('/usuarios2', (req, res) => {
+  const { id, nombre } = req.body;
 
   const insertQuery = `
-    INSERT INTO usuarios (id, nombre, email)
-    VALUES (?, ?, ?)
+    INSERT INTO usuarios2 (id, nombre)
+    VALUES (?, ?)
   `;
 
-  client.execute(insertQuery, [id, nombre, email], { prepare: true }, (err) => {
+  client.execute(insertQuery, [id, nombre], { prepare: true }, (err) => {
     if (err) {
       console.error('Error al crear el usuario:', err);
       res.status(500).send('Error al crear el usuario');
@@ -76,17 +98,23 @@ app.post('/usuarios', (req, res) => {
 });
 
 // Ruta para obtener todos los usuarios
-app.get('/usuarios', (req, res) => {
-  const selectQuery = 'SELECT * FROM usuarios';
+app.get('/usuarios2', (req, res) => {
+  const selectQuery = 'SELECT * FROM usuarios2';
 
   client.execute(selectQuery, [], (err, result) => {
     if (err) {
       console.error('Error al obtener los usuarios:', err);
       res.status(500).send('Error al obtener los usuarios');
     } else {
-      res.json(result.rows);
+      // Renderiza la plantilla Pug y pasa los datos de usuarios a la vista
+      res.render('usuarios2', { users: result.rows });
     }
   });
+});
+
+// Ruta para servir el archivo index.html
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
 app.listen(port, () => {

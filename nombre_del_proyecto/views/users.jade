@@ -1,0 +1,14 @@
+doctype html
+html
+  head
+    title Lista de Usuarios
+  body
+    h1 Lista de Usuarios
+    table
+      tr
+        th ID
+        th Nombre
+      each user in users
+        tr
+          td= user.id
+          td= user.nombre
