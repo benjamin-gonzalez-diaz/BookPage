@@ -5,6 +5,15 @@ Tarea1 Software Architecture Universidad de los andes (chile)
 npm install
 
 # para instalar cassandra en linux (ubuntu 22.04L) :
+# pre instalacion de cassandra
+
+agregue los siguiente comando para añadir cassandra:
+
+    echo "deb https://debian.cassandra.apache.org 41x main" | sudo tee -a /etc/apt/sources.list.d/cassandra.sources.list
+    
+    deb https://debian.cassandra.apache.org 41x main
+    curl https://downloads.apache.org/cassandra/KEYS | sudo apt-key add -
+
 paso 1:
 
     sudo apt update

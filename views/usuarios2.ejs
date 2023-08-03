@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tabla de Usuarios</title>
+</head>
+
+<body>
+  <table>
+    <tr>
+      <th>Id</th>
+      <th>Nombre</th>
+      <th>Acciones</th>
+    </tr>
+    <% usuarios.forEach((user) => { %>
+      <tr>
+        <td><%= user.id %></td>
+        <td><%= user.nombre %></td>
+        <td>
+          <form method="post" action="/usuarios2/<%= user.id %>/delete">
+            <button type="submit">Eliminar</button>
+          </form>
+        </td>
+      </tr>
+    <% }); %>
+  </table>
+  <form method="post" action="/usuarios2">
+    <input type="text" name="id" placeholder="Id">
+    <input type="text" name="nombre" placeholder="Nombre">
+    <button type="submit">Agregar</button>
+  </form>
+</body>
+
+</html>

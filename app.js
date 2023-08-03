@@ -3,10 +3,14 @@
 const express = require('express');
 const cassandra = require('cassandra-driver');
 const path = require('path');
+const bodyParser = require('body-parser');
+const { v4: uuidv4 } = require('uuid'); 
 const app = express();
 const port = 3000;
 
 app.use(express.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 app.set('view engine', 'ejs');
 app.set('views', './views');
 
@@ -164,71 +168,155 @@ client.execute(createTableQueryUsuarios, (err) => {
 // -------------------------------------------
 // Get y Post -------------------------------------
 // Ruta para crear un nuevo usuario (Ejemplo)
-app.post('/usuarios2', (req, res) => {
-  const { id, nombre } = req.body;
+// app.post('/usuarios2', (req, res) => {
+//   const { id, nombre } = req.body;
 
-  const insertQuery = `
-    INSERT INTO usuarios2 (id, nombre)
-    VALUES (?, ?)
-  `;
+//   const insertQuery = `
+//     INSERT INTO usuarios2 (id, nombre)
+//     VALUES (?, ?)
+//   `;
 
-  client.execute(insertQuery, [id, nombre], { prepare: true }, (err) => {
-    if (err) {
-      console.error('Error al crear el usuario:', err);
-      res.status(500).send('Error al crear el usuario');
-    } else {
-      console.log('Usuario creado exitosamente');
-      res.status(201).send('Usuario creado exitosamente');
-    }
-  });
-});
-// Ruta para obtener todos los usuarios(Ejemplo)
+//   client.execute(insertQuery, [id, nombre], { prepare: true }, (err) => {
+//     if (err) {
+//       console.error('Error al crear el usuario:', err);
+//       res.status(500).send('Error al crear el usuario');
+//     } else {
+//       console.log('Usuario creado exitosamente');
+//       res.status(201).send('Usuario creado exitosamente');
+//     }
+//   });
+// });
+// CRUD EJEMPLO
+// Ruta para mostrar todos los usuarios
 app.get('/usuarios2', (req, res) => {
-  const selectQuery = 'SELECT * FROM usuarios2';
+  const selectQuery = 'SELECT * FROM mi_keyspace.usuarios2';
 
   client.execute(selectQuery, [], (err, result) => {
     if (err) {
       console.error('Error al obtener los usuarios:', err);
       res.status(500).send('Error al obtener los usuarios');
     } else {
-      // Renderiza la plantilla Pug y pasa los datos de usuarios a la vista
-      res.render('usuarios2', { users: result.rows });
+      res.render('usuarios2', { usuarios: result.rows });
     }
   });
 });
-// Ruta para crear un nuevo Autor
-app.post('/Authors', (req, res) => {
-  const { id, nombre, dateOfBirth, country, shortDescription} = req.body;
 
-  const insertQuery = `
-    INSERT INTO Authors (id, nombre, dateOfBirth, country, shortDescription)
-    VALUES (?, ?, ?, ? ,?)
-  `;
+// Ruta para agregar un nuevo usuario
+app.post('/usuarios2', (req, res) => {
+  const { id, nombre } = req.body;
+  const insertQuery = 'INSERT INTO mi_keyspace.usuarios2 (id, nombre) VALUES (?, ?)';
 
-  client.execute(insertQuery, [id, nombre, dateOfBirth, country, shortDescription], { prepare: true }, (err) => {
+  client.execute(insertQuery, [id, nombre], { prepare: true }, (err) => {
     if (err) {
-      console.error('Error al crear el Authors:', err);
-      res.status(500).send('Error al crear el Authors');
+      console.error('Error al agregar el usuario:', err);
+      res.status(500).send('Error al agregar el usuario');
     } else {
-      console.log('Authors creado exitosamente');
-      res.status(201).send('Authors creado exitosamente');
+      res.redirect('/usuarios2');
     }
   });
 });
-// Ruta para obtener todos los Autores
-app.get('/Authors', (req, res) => {
-  const selectQuery = 'SELECT * FROM authors';
+
+// Ruta para actualizar un usuario
+app.post('/usuarios2/:id', (req, res) => {
+  const userId = req.params.id;
+  const { nombre } = req.body;
+  const updateQuery = 'UPDATE mi_keyspace.usuarios2 SET nombre = ? WHERE id = ?';
+
+  client.execute(updateQuery, [nombre, userId], { prepare: true }, (err) => {
+    if (err) {
+      console.error('Error al actualizar el usuario:', err);
+      res.status(500).send('Error al actualizar el usuario');
+    } else {
+      res.redirect('/usuarios2');
+    }
+  });
+});
+
+// Ruta para eliminar un usuario
+app.post('/usuarios2/:id/delete', (req, res) => {
+  const userId = req.params.id;
+  const deleteQuery = 'DELETE FROM mi_keyspace.usuarios2 WHERE id = ?';
+
+  client.execute(deleteQuery, [userId], { prepare: true }, (err) => {
+    if (err) {
+      console.error('Error al eliminar el usuario:', err);
+      res.status(500).send('Error al eliminar el usuario');
+    } else {
+      res.redirect('/usuarios2');
+    }
+  });
+});
+//--------------------------------------------
+
+// Ruta para obtener un nuevo Autor
+app.get('/authors', (req, res) => {
+  const selectQuery = 'SELECT * FROM mi_keyspace.authors';
 
   client.execute(selectQuery, [], (err, result) => {
     if (err) {
-      console.error('Error al obtener los authors:', err);
-      res.status(500).send('Error al obtener los authors');
+      console.error('Error al obtener los autores:', err);
+      res.status(500).send('Error al obtener los autores');
     } else {
-      // Renderiza la plantilla Pug y pasa los datos de usuarios a la vista
       res.render('authors', { Authors: result.rows });
     }
   });
 });
+
+// Ruta para agregar un nuevo autor
+app.post('/authors', (req, res) => {
+  console.log(req.body);
+  const authorName = req.body.nombre;
+  const dateOfBirth = req.body.dateOfBirth;
+  const country = req.body.country;
+  const shortDescription = req.body.shortDescription;
+
+  // Genera un ID único utilizando uuidv4()
+  const authorId = Math.floor(Math.random() * 9000) + 1
+
+  const insertQuery = 'INSERT INTO mi_keyspace.authors (id, nombre, dateOfBirth, country, shortDescription) VALUES (?, ?, ?, ?, ?)';
+
+  client.execute(insertQuery, [authorId, authorName, dateOfBirth, country, shortDescription], { prepare: true }, (err) => {
+    if (err) {
+      console.error('Error al agregar el autor:', err);
+      res.status(500).send('Error al agregar el autor');
+    } else {
+      res.redirect('/authors');
+    }
+  });
+});
+
+
+// Ruta para actualizar un autor
+app.post('/authors/:id', (req, res) => {
+  const authorId = req.params.id;
+  const { nombre, dateOfBirth, country, shortDescription } = req.body;
+  const updateQuery = 'UPDATE mi_keyspace.authors SET nombre = ?, dateOfBirth = ?, country = ?, shortDescription = ? WHERE id = ?';
+
+  client.execute(updateQuery, [nombre, dateOfBirth, country, shortDescription, authorId], { prepare: true }, (err) => {
+    if (err) {
+      console.error('Error al actualizar el autor:', err);
+      res.status(500).send('Error al actualizar el autor');
+    } else {
+      res.redirect('/authors');
+    }
+  });
+});
+
+// Ruta para eliminar un autor
+app.post('/authors/:id/delete', (req, res) => {
+  const authorId = req.params.id;
+  const deleteQuery = 'DELETE FROM mi_keyspace.authors WHERE id = ?';
+
+  client.execute(deleteQuery, [parseInt(authorId)], { prepare: true }, (err) => {
+    if (err) {
+      console.error('Error al eliminar el autor:', err);
+      res.status(500).send('Error al eliminar el autor');
+    } else {
+      res.redirect('/authors');
+    }
+  });
+});
+
 // Ruta para crear un nuevo Libro
 app.post('/Books', (req, res) => {
   const { id, nombre, summary, dateOfPublication, numberOfSales} = req.body;
