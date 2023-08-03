@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Tabla de Usuarios</title>
+  <script src="/script.js"></script>
+</head>
+<body>
+  <table>
+    <style>
+      table {
+        border-collapse: collapse;
+        width: 100%;
+      }
+      th, td {
+        border: 1px solid black;
+        padding: 8px;
+        text-align: left;
+      }
+      th {
+        background-color: #f2f2f2;
+      }
+    </style>
+    <tr>
+      <th>Id</th>
+      <th>Nombre</th>
+      <th>Dia de Nacimiento</th>
+      <th>Pais de Origen</th>
+      <th>Descripción breve del autor</th>
+      <th>Acciones</th>
+    </tr>
+    <% Authors.forEach(user => { %>
+      <tr>
+        <td><%= user.id %></td>
+        <td><%= user.nombre %></td>
+        <td><%= user.dateofbirth %></td>
+        <td><%= user.country %></td>
+        <td><%= user.shortdescription %></td>
+        <td>
+          <button type="button" onclick="updateUser(user.id)">Actualizar</button>
+          <button type="button" onclick="deleteUser(user.id )">Eliminar</button>
+          <button type="button" onclick="eliminarUsuario(user.id, function(err, result) { console.log(result); })">Eliminar</button>
+        </td>
+      </tr>
+    <% }); %>
+  </table>
+</body>
+</html>

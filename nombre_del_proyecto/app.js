@@ -7,7 +7,7 @@ const app = express();
 const port = 3000;
 
 app.use(express.json());
-app.set('view engine', 'pug');
+app.set('view engine', 'ejs');
 app.set('views', './views');
 
 // ------------------------------------
