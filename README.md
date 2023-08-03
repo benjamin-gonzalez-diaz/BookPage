@@ -81,3 +81,20 @@ si le sale esto:
 
 es que ya esta correcto
 
+# para agregar nuevos datos en la tabla (momentaneo)
+
+agregar sales:
+
+    curl -X POST -H "Content-Type: application/json" -d '{"id": 2, "book": "Nombre del libro", "year": "2023", "sales": 100}' http://localhost:3000/sales
+
+agregar Authors:
+
+    curl -X POST -H "Content-Type: application/json" -d '{"id": 2, "nombre": "Julio", "dateOfBirth": "18_de_gosto", "country": "Brasil", "shortDescription": "esunbuentipo"}' http://localhost:3000/Authors
+
+agregar Reviews:
+
+    curl -X POST -H "Content-Type: application/json" -d '{"id": 2, "book": "Nombre del libro", "review": "Reseña del libro", "score": 5, "numberOfVotes": 10}' http://localhost:3000/reviews
+
+agregar Books:
+
+    curl -X POST -H "Content-Type: application/json" -d '{"id": 2, "nombre": "Nombre del libro", "summary": "Resumen del libro", "dateOfPublication": "Fecha de publicación", "numberOfSales": 100}' http://localhost:3000/books
