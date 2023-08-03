@@ -1,9 +1,11 @@
 html
   head
-    title Tabla de Usuarios
+    title Tabla de Libros
     script(src="/script.js")
 
   body
+    input(type="text" placeholder="Buscar por resumen")
+    button(type="button" onclick='searchSummary()') Buscar
     table 
       style.
         table {

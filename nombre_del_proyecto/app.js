@@ -104,6 +104,14 @@ CREATE TABLE IF NOT EXISTS mi_keyspace.salesbyyear (
   sales int
 )
 `;
+
+const createTableAuthorsXBooks= `
+CREATE TABLE IF NOT EXISTS mi_keyspace.authorsxbooks (
+  id int PRIMARY KEY,
+  id_Authors int,
+  id_books int,
+)
+`;
 // ----------------------------------------------
 // coneccion con tablas --------------------------
 client.execute(createTableQueryUsuarios, (err) => {
