@@ -11,6 +11,7 @@ app.set('views', './views');
 // Configuración para servir archivos estáticos desde la carpeta "public"
 app.use(express.static(path.join(__dirname, 'public')));
 
+
 // Configura la conexión a Cassandra
 const client = new cassandra.Client({ 
   contactPoints: ['localhost'], 
@@ -58,6 +59,46 @@ const createTableQueryUsuarios2 = `
   )
 `;
 
+
+const createTableQueryAuthors = `
+CREATE TABLE IF NOT EXISTS mi_keyspace.authors (
+  id int PRIMARY KEY,
+  nombre TEXT,
+  dateOfBirth TEXT,
+  country TEXT,
+  shortDescription TEXT
+)
+`;
+
+const createTableQueryBooks = `
+CREATE TABLE IF NOT EXISTS mi_keyspace.books (
+  id int PRIMARY KEY,
+  nombre TEXT,
+  summary TEXT,
+  dateOfPublication TEXT,
+  numberOfSales int
+)
+`;
+
+const createTableQueryReviews = `
+CREATE TABLE IF NOT EXISTS mi_keyspace.reviews (
+  id int PRIMARY KEY,
+  book TEXT,
+  review TEXT,
+  score int,
+  numberOfVotes int
+)
+`;
+
+const createTableQuerySalesByYear= `
+CREATE TABLE IF NOT EXISTS mi_keyspace.salesbyyear (
+  id int PRIMARY KEY,
+  book TEXT,
+  year TEXT,
+  sales int
+)
+`;
+
 client.execute(createTableQueryUsuarios, (err) => {
   if (err) {
     console.error('Error al crear la tabla usuarios:', err);
@@ -68,9 +109,18 @@ client.execute(createTableQueryUsuarios, (err) => {
       if (err) {
         console.error('Error al crear la tabla usuarios2:', err);
       } else {
-        console.log('Tabla usuarios2 creada o ya existente');
+
       }
-    });
+    })
+    console.log('Tabla usuarios2 creada o ya existente');
+    // Ahora ejecutas el query para la segunda tabla
+    client.execute(createTableQueryAuthors, (err) => {
+      if (err) {
+        console.error('Error al crear la tabla Autores:', err);
+      } else {
+        console.log('Tabla Autores creada o ya existente');
+      }
+    });;
   }
 });
 
@@ -96,7 +146,25 @@ app.post('/usuarios2', (req, res) => {
     }
   });
 });
+// Ruta para crear un nuevo usuario
+app.post('/Authors', (req, res) => {
+  const { id, nombre, dateOfBirth, country, shortDescription} = req.body;
 
+  const insertQuery = `
+    INSERT INTO Authors (id, nombre, dateOfBirth, country, shortDescription)
+    VALUES (?, ?, ?, ? ,?)
+  `;
+
+  client.execute(insertQuery, [id, nombre, dateOfBirth, country, shortDescription], { prepare: true }, (err) => {
+    if (err) {
+      console.error('Error al crear el Authors:', err);
+      res.status(500).send('Error al crear el Authors');
+    } else {
+      console.log('Authors creado exitosamente');
+      res.status(201).send('Authors creado exitosamente');
+    }
+  });
+});
 // Ruta para obtener todos los usuarios
 app.get('/usuarios2', (req, res) => {
   const selectQuery = 'SELECT * FROM usuarios2';
@@ -108,6 +176,52 @@ app.get('/usuarios2', (req, res) => {
     } else {
       // Renderiza la plantilla Pug y pasa los datos de usuarios a la vista
       res.render('usuarios2', { users: result.rows });
+    }
+  });
+});
+
+// Ruta para obtener todos los usuarios
+app.get('/Authors', (req, res) => {
+  const selectQuery = 'SELECT * FROM authors';
+
+  client.execute(selectQuery, [], (err, result) => {
+    if (err) {
+      console.error('Error al obtener los authors:', err);
+      res.status(500).send('Error al obtener los authors');
+    } else {
+      // Renderiza la plantilla Pug y pasa los datos de usuarios a la vista
+      res.render('authors', { Authors: result.rows });
+    }
+  });
+});
+
+
+// Función para eliminar un usuario por su ID
+function eliminarUsuario(userId, callback) {
+  const deleteQuery = `
+    DELETE FROM mi_keyspace.usuarios
+    WHERE id = ?
+  `;
+
+  client.execute(deleteQuery, [userId], { prepare: true }, (err, result) => {
+    if (err) {
+      console.error('Error al eliminar el usuario:', err);
+      callback(err, null);
+    } else {
+      console.log('Usuario eliminado exitosamente');
+      callback(null, result);
+    }
+  });
+}
+// Ruta para eliminar un usuario por su ID
+app.delete('/usuarios/:id', (req, res) => {
+  const userId = req.params.id;
+
+  eliminarUsuario(userId, (err, result) => {
+    if (err) {
+      res.status(500).send('Error al eliminar el usuario');
+    } else {
+      res.status(200).send('Usuario eliminado exitosamente');
     }
   });
 });
