@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tabla de Reseñas</title>
+</head>
+
+<body>
+  <table>
+    <style>
+      table {
+        border-collapse: collapse;
+        width: 100%;
+      }
+
+      th, td {
+        border: 1px solid black;
+        padding: 8px;
+        text-align: left;
+      }
+
+      th {
+        background-color: #f2f2f2;
+      }
+    </style>
+    <tr>
+      <th>Id</th>
+      <th>Libro</th>
+      <th>Reseña</th>
+      <th>Puntuación</th>
+      <th>Número de Votos</th>
+      <th>Acciones</th>
+    </tr>
+    <% reviews.forEach(review => { %>
+      <tr>
+        <td><%= review.id %></td>
+        <td><%= review.book %></td>
+        <td><%= review.review %></td>
+        <td><%= review.score %></td>
+        <td><%= review.numberofvotes %></td>
+        <td>
+          <form method="post" action="/reviews/<%= review.id %>">
+            <input type="text" name="book" value="<%= review.book %>">
+            <input type="text" name="review" value="<%= review.review %>">
+            <input type="number" name="score" value="<%= review.score %>">
+            <input type="number" name="numberOfVotes" value="<%= review.numberofvotes %>">
+            <button type="submit">Actualizar</button>
+          </form>
+          <form method="post" action="/reviews/<%= review.id %>/delete">
+            <button type="submit">Eliminar</button>
+          </form>
+        </td>
+      </tr>
+    <% }); %>
+  </table>
+  <form method="post" action="/reviews">
+    <input type="text" name="book" placeholder="Libro">
+    <input type="text" name="review" placeholder="Reseña">
+    <input type="number" name="score" placeholder="Puntuación">
+    <input type="number" name="numberOfVotes" placeholder="Número de Votos">
+    <button type="submit">Agregar</button>
+  </form>
+</body>
+
+</html>

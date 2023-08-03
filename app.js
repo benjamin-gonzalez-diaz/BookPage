@@ -247,7 +247,7 @@ app.post('/usuarios2/:id/delete', (req, res) => {
   });
 });
 //--------------------------------------------
-
+// autor ------------------------------------- CRUD Listo
 // Ruta para obtener un nuevo Autor
 app.get('/authors', (req, res) => {
   const selectQuery = 'SELECT * FROM mi_keyspace.authors';
@@ -261,7 +261,6 @@ app.get('/authors', (req, res) => {
     }
   });
 });
-
 // Ruta para agregar un nuevo autor
 app.post('/authors', (req, res) => {
   console.log(req.body);
@@ -284,8 +283,6 @@ app.post('/authors', (req, res) => {
     }
   });
 });
-
-
 // Ruta para actualizar un autor
 app.post('/authors/:id', (req, res) => {
   const authorId = req.params.id;
@@ -301,7 +298,6 @@ app.post('/authors/:id', (req, res) => {
     }
   });
 });
-
 // Ruta para eliminar un autor
 app.post('/authors/:id/delete', (req, res) => {
   const authorId = req.params.id;
@@ -316,135 +312,213 @@ app.post('/authors/:id/delete', (req, res) => {
     }
   });
 });
-
-// Ruta para crear un nuevo Libro
-app.post('/Books', (req, res) => {
-  const { id, nombre, summary, dateOfPublication, numberOfSales} = req.body;
-
-  const insertQuery = `
-    INSERT INTO Books (id, nombre,summary, dateOfPublication, numberOfSales)
-    VALUES (?, ?, ?, ? ,?)
-  `;
-
-  client.execute(insertQuery, [id, nombre, summary, dateOfPublication, numberOfSales], { prepare: true }, (err) => {
-    if (err) {
-      console.error('Error al crear el Books:', err);
-      res.status(500).send('Error al crear el Books');
-    } else {
-      console.log('Books creado exitosamente');
-      res.status(201).send('Books creado exitosamente');
-    }
-  });
-});
-// Ruta para obtener todos los Libros
-app.get('/Books', (req, res) => {
-  const selectQuery = 'SELECT * FROM books';
+// ------------------------------------------
+// Libros CRUD listo------------------------------------------------------------
+// Ruta para mostrar todos los libros
+app.get('/books', (req, res) => {
+  const selectQuery = 'SELECT * FROM mi_keyspace.books';
 
   client.execute(selectQuery, [], (err, result) => {
     if (err) {
-      console.error('Error al obtener los Books:', err);
-      res.status(500).send('Error al obtener los Books');
+      console.error('Error al obtener los libros:', err);
+      res.status(500).send('Error al obtener los libros');
     } else {
-      // Renderiza la plantilla Pug y pasa los datos de usuarios a la vista
-      res.render('Books', { Authors: result.rows });
+      res.render('books', { books: result.rows });
     }
   });
 });
-// Ruta para crear un nuevo Libro
-app.post('/Reviews', (req, res) => {
-  const { id, book, review, score, numberOfVotes} = req.body;
+// Ruta para agregar un nuevo libro
+app.post('/books', (req, res) => {
+  console.log(req.body);
+  const bookId = Math.floor(Math.random() * 9000) + 1
+  const bookName = req.body.nombre;
+  const summary = req.body.summary;
+  const dateOfPublication = req.body.dateOfPublication;
+  const numberOfSales = parseInt(req.body.numberOfSales);
 
-  const insertQuery = `
-    INSERT INTO Reviews (id, book, review, score, numberOfVotes)
-    VALUES (?, ?, ?, ? ,?)
-  `;
+  const insertQuery = 'INSERT INTO mi_keyspace.books (id, nombre, summary, dateOfPublication, numberOfSales) VALUES (?, ?, ?, ?, ?)';
 
-  client.execute(insertQuery, [id, book, review, score, numberOfVotes], { prepare: true }, (err) => {
+  client.execute(insertQuery, [bookId, bookName, summary, dateOfPublication, numberOfSales], { prepare: true }, (err) => {
     if (err) {
-      console.error('Error al crear el Reviews:', err);
-      res.status(500).send('Error al crear el Reviews');
+      console.error('Error al agregar el libro:', err);
+      res.status(500).send('Error al agregar el libro');
     } else {
-      console.log('Reviews creado exitosamente');
-      res.status(201).send('Reviews creado exitosamente');
+      res.redirect('/books');
     }
   });
 });
-// Ruta para obtener todos los Libros
-app.get('/Reviews', (req, res) => {
-  const selectQuery = 'SELECT * FROM Reviews';
+// Ruta para eliminar un libro
+app.post('/books/:id/delete', (req, res) => {
+  const bookId = parseInt(req.params.id);
+
+  const deleteQuery = 'DELETE FROM mi_keyspace.books WHERE id = ?';
+
+  client.execute(deleteQuery, [bookId], { prepare: true }, (err) => {
+    if (err) {
+      console.error('Error al eliminar el libro:', err);
+      res.status(500).send('Error al eliminar el libro');
+    } else {
+      res.redirect('/books');
+    }
+  });
+});
+// Ruta para actualizar un libro
+app.post('/books/:id', (req, res) => {
+  const bookId = parseInt(req.params.id);
+  const bookName = req.body.nombre;
+  const summary = req.body.summary;
+  const dateOfPublication = req.body.dateOfPublication;
+  const numberOfSales = parseInt(req.body.numberOfSales);
+
+  const updateQuery = 'UPDATE mi_keyspace.books SET nombre = ?, summary = ?, dateOfPublication = ?, numberOfSales = ? WHERE id = ?';
+
+  client.execute(updateQuery, [bookName, summary, dateOfPublication, numberOfSales, bookId], { prepare: true }, (err) => {
+    if (err) {
+      console.error('Error al actualizar el libro:', err);
+      res.status(500).send('Error al actualizar el libro');
+    } else {
+      res.redirect('/books');
+    }
+  });
+});
+// Reseñas CRUD listo---------------------------------------------------------------------
+// Ruta para mostrar todas las reseñas
+app.get('/reviews', (req, res) => {
+  const selectQuery = 'SELECT * FROM mi_keyspace.reviews';
 
   client.execute(selectQuery, [], (err, result) => {
     if (err) {
-      console.error('Error al obtener los Reviews:', err);
-      res.status(500).send('Error al obtener los Reviews');
+      console.error('Error al obtener las reseñas:', err);
+      res.status(500).send('Error al obtener las reseñas');
     } else {
-      // Renderiza la plantilla Pug y pasa los datos de usuarios a la vista
-      res.render('Reviews', { Authors: result.rows });
+      res.render('reviews', { reviews: result.rows });
     }
   });
 });
 
-// Ruta para crear un nuevo Review
-app.post('/sales', (req, res) => {
-  const { id, book, year, sales} = req.body;
+// Ruta para agregar una nueva reseña
+app.post('/reviews', (req, res) => {
+  console.log(req.body);
+  const reviewId = Math.floor(Math.random() * 9000) + 1
+  const book = req.body.book;
+  const review = req.body.review;
+  const score = parseInt(req.body.score);
+  const numberOfVotes = parseInt(req.body.numberOfVotes);
 
-  const insertQuery = `
-    INSERT INTO salesbyyear (id, book,  year, sales)
-    VALUES (?, ?, ?, ?)
-  `;
+  const insertQuery = 'INSERT INTO mi_keyspace.reviews (id, book, review, score, numberOfVotes) VALUES (?, ?, ?, ?, ?)';
 
-  client.execute(insertQuery, [id, book,  year, sales], { prepare: true }, (err) => {
+  client.execute(insertQuery, [reviewId, book, review, score, numberOfVotes], { prepare: true }, (err) => {
     if (err) {
-      console.error('Error al crear el Sales:', err);
-      res.status(500).send('Error al crear el Sales');
+      console.error('Error al agregar la reseña:', err);
+      res.status(500).send('Error al agregar la reseña');
     } else {
-      console.log('Sales creado exitosamente');
-      res.status(201).send('Sales creado exitosamente');
+      res.redirect('/reviews');
     }
   });
 });
-// Ruta para obtener todos los Review
-app.get('/sales', (req, res) => {
-  const selectQuery = 'SELECT * FROM salesbyyear';
+
+// Ruta para eliminar una reseña
+app.post('/reviews/:id/delete', (req, res) => {
+  const reviewId = parseInt(req.params.id);
+
+  const deleteQuery = 'DELETE FROM mi_keyspace.reviews WHERE id = ?';
+
+  client.execute(deleteQuery, [reviewId], { prepare: true }, (err) => {
+    if (err) {
+      console.error('Error al eliminar la reseña:', err);
+      res.status(500).send('Error al eliminar la reseña');
+    } else {
+      res.redirect('/reviews');
+    }
+  });
+});
+
+// Ruta para actualizar una reseña
+app.post('/reviews/:id', (req, res) => {
+  const reviewId = parseInt(req.params.id);
+  const book = req.body.book;
+  const review = req.body.review;
+  const score = parseInt(req.body.score);
+  const numberOfVotes = parseInt(req.body.numberOfVotes);
+
+  const updateQuery = 'UPDATE mi_keyspace.reviews SET book = ?, review = ?, score = ?, numberOfVotes = ? WHERE id = ?';
+
+  client.execute(updateQuery, [book, review, score, numberOfVotes, reviewId], { prepare: true }, (err) => {
+    if (err) {
+      console.error('Error al actualizar la reseña:', err);
+      res.status(500).send('Error al actualizar la reseña');
+    } else {
+      res.redirect('/reviews');
+    }
+  });
+});
+// ------------------------------------------------------------
+// Ventas ---------------------------------------------------------------------
+// Ruta para mostrar todas las ventas por año
+app.get('/salesbyyear', (req, res) => {
+  const selectQuery = 'SELECT * FROM mi_keyspace.salesbyyear';
 
   client.execute(selectQuery, [], (err, result) => {
     if (err) {
-      console.error('Error al obtener los Sales:', err);
-      res.status(500).send('Error al obtener los Sales');
+      console.error('Error al obtener las ventas por año:', err);
+      res.status(500).send('Error al obtener las ventas por año');
     } else {
-      // Renderiza la plantilla Pug y pasa los datos de usuarios a la vista
-      res.render('Sales', { Authors: result.rows });
+      res.render('salesbyyear', { sales: result.rows });
     }
   });
 });
 
-// delete (not working)
-// Función para eliminar un usuario por su ID
-function eliminarUsuario(userId, callback) {
-  const deleteQuery = `
-    DELETE FROM mi_keyspace.usuarios
-    WHERE id = ?
-  `;
+// Ruta para agregar una nueva venta por año
+app.post('/salesbyyear', (req, res) => {
+  console.log(req.body);
+  const saleId = Math.floor(Math.random() * 9000) + 1
+  const book = req.body.book;
+  const year = req.body.year;
+  const sales = parseInt(req.body.sales);
 
-  client.execute(deleteQuery, [userId], { prepare: true }, (err, result) => {
+  const insertQuery = 'INSERT INTO mi_keyspace.salesbyyear (id, book, year, sales) VALUES (?, ?, ?, ?)';
+
+  client.execute(insertQuery, [saleId, book, year, sales], { prepare: true }, (err) => {
     if (err) {
-      console.error('Error al eliminar el usuario:', err);
-      callback(err, null);
+      console.error('Error al agregar la venta por año:', err);
+      res.status(500).send('Error al agregar la venta por año');
     } else {
-      console.log('Usuario eliminado exitosamente');
-      callback(null, result);
+      res.redirect('/salesbyyear');
     }
   });
-}
-// Ruta para eliminar un usuario por su ID
-app.delete('/usuarios/:id', (req, res) => {
-  const userId = req.params.id;
+});
 
-  eliminarUsuario(userId, (err, result) => {
+// Ruta para eliminar una venta por año
+app.post('/salesbyyear/:id/delete', (req, res) => {
+  const saleId = parseInt(req.params.id);
+
+  const deleteQuery = 'DELETE FROM mi_keyspace.salesbyyear WHERE id = ?';
+
+  client.execute(deleteQuery, [saleId], { prepare: true }, (err) => {
     if (err) {
-      res.status(500).send('Error al eliminar el usuario');
+      console.error('Error al eliminar la venta por año:', err);
+      res.status(500).send('Error al eliminar la venta por año');
     } else {
-      res.status(200).send('Usuario eliminado exitosamente');
+      res.redirect('/salesbyyear');
+    }
+  });
+});
+
+// Ruta para actualizar una venta por año
+app.post('/salesbyyear/:id', (req, res) => {
+  const saleId = parseInt(req.params.id);
+  const book = req.body.book;
+  const year = req.body.year;
+  const sales = parseInt(req.body.sales);
+
+  const updateQuery = 'UPDATE mi_keyspace.salesbyyear SET book = ?, year = ?, sales = ? WHERE id = ?';
+
+  client.execute(updateQuery, [book, year, sales, saleId], { prepare: true }, (err) => {
+    if (err) {
+      console.error('Error al actualizar la venta por año:', err);
+      res.status(500).send('Error al actualizar la venta por año');
+    } else {
+      res.redirect('/salesbyyear');
     }
   });
 });
