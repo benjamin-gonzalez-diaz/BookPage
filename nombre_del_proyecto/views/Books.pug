@@ -22,17 +22,17 @@ html
       tr
         th Id
         th Nombre
-        th dia de nacimiento 
-        th pais de origen 
-        th descripcion breve del autor
+        th date of publication
+        th number of sales
+        th summary
         th Acciones
       each user in Authors
         tr
           td= user.id
           td= user.nombre
-          td= user.dateofbirth
-          td= user.country
-          td= user.shortdescription
+          td= user.dateofpublication
+          td= user.numberofsales
+          td= user.summary
           td
             button(type="button" onclick='updateUser('+user.id+')') Actualizar
             button(type="button" onclick='deleteUser('+user.id+')') Eliminar
