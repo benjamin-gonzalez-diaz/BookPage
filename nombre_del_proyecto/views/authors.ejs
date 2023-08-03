@@ -36,9 +36,9 @@
         <td><%= user.country %></td>
         <td><%= user.shortdescription %></td>
         <td>
-          <button type="button" onclick="updateUser(user.id)">Actualizar</button>
-          <button type="button" onclick="deleteUser(user.id )">Eliminar</button>
-          <button type="button" onclick="eliminarUsuario(user.id, function(err, result) { console.log(result); })">Eliminar</button>
+          <button type="button" onclick="updateUser(<%=user.id%>)">Actualizar</button>
+          <button type="button" onclick="deleteUser(<%=user.id %>)">Eliminar</button>
+          <button type="button" onclick="eliminarUsuario(<%=user.id%>, function(err, result) { console.log(result); })">Eliminar</button>
         </td>
       </tr>
     <% }); %>

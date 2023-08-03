@@ -24,23 +24,21 @@
     </style>
     <tr>
       <th>Id</th>
-      <th>Nombre</th>
-      <th>number of votes</th>
-      <th>review</th>
-      <th>score</th>
+      <th>book</th>
+      <th>sales</th>
+      <th>year</th>
       <th>Acciones</th>
     </tr>
     <% Authors.forEach(user => { %>
       <tr>
         <td><%= user.id %></td>
-        <td><%= user.nombre %></td>
-        <td><%= user.numberofvotes %></td>
-        <td><%= user.review %></td>
-        <td><%= user.score %></td>
+        <td><%= user.book %></td>
+        <td><%= user.sales%></td>
+        <td><%= user.year %></td>
         <td>
-          <button type="button" onclick="updateUser( user.id )">Actualizar</button>
-          <button type="button" onclick="deleteUser(user.id)">Eliminar</button>
-          <button type="button" onclick="eliminarUsuario( user.id, function(err, result) { console.log(result); })">Eliminar</button>
+          <button type="button" onclick="updateUser(<%= user.id %>)">Actualizar</button>
+          <button type="button" onclick="deleteUser(<%=user.id%>)">Eliminar</button>
+          <button type="button" onclick="eliminarUsuario(<%= user.id%>, function(err, result) { console.log(result); })">Eliminar</button>
         </td>
       </tr>
     <% }); %>
