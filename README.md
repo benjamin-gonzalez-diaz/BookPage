@@ -38,6 +38,9 @@ para detener cassandra:
 
     sudo service cassandra stop
 
+# librerìa para fake data
+npm install express faker
+
 # acuerdese 
 
 de que en el app.js debe estar el: const cassandra = require('cassandra-driver'); 

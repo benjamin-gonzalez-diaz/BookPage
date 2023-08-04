@@ -5,8 +5,11 @@ const cassandra = require('cassandra-driver');
 const path = require('path');
 const bodyParser = require('body-parser');
 const { v4: uuidv4 } = require('uuid'); 
+const faker = require('faker');
+
 const app = express();
 const port = 3000;
+
 
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -20,6 +23,8 @@ app.set('views', './views');
 // Configuración para servir archivos estáticos desde la carpeta "public"
 app.use(express.static(path.join(__dirname, 'public')));
 
+let authorIdCounter = 1000;
+let bookIdCounter = 2000;
 
 // Configura la conexión a Cassandra
 const client = new cassandra.Client({ 
@@ -49,8 +54,60 @@ client.execute(createKeyspaceQuery, (err) => {
     console.error('Error al crear el keyspace:', err);
   } else {
     console.log('Keyspace creado o ya existente');
+
+    populateData(); //apenas arranca el programa se llena la data
   }
 });
+
+// Función para llenar la base de datos con authors
+function populateFakeAuthors() {
+  return {
+    id: authorIdCounter++,
+    nombre: faker.name.findName(),
+    dateOfBirth: faker.date.past().toISOString().split('T')[0],
+    country: faker.address.country(),
+    shortDescription: faker.lorem.paragraph(),
+  };
+}
+
+// Función para llenar la base de datos con books
+function populateFakeBooks() {
+  return {
+    id: bookIdCounter++,
+    nombre: faker.lorem.words(),
+    summary: faker.lorem.paragraph(),
+    dateOfPublication: faker.date.past().toISOString().split('T')[0],
+    numberOfSales: Math.floor(Math.random() * 1000) + 1,
+  };
+}
+
+function populateData() {
+  const numAuthors = 10;
+  const numBooks = 10;
+
+  for (let i = 0; i < numAuthors; i++) {
+    const fakeAuthor = populateFakeAuthors();
+    const insertQuery = 'INSERT INTO mi_keyspace.authors (id, nombre, dateOfBirth, country, shortDescription) VALUES (?, ?, ?, ?, ?)';
+
+    client.execute(insertQuery, [fakeAuthor.id, fakeAuthor.nombre, fakeAuthor.dateOfBirth, fakeAuthor.country, fakeAuthor.shortDescription], { prepare: true }, (err) => {
+      if (err) {
+        console.error('No se agregó autor:', err);
+      } 
+    });
+  }
+
+  for (let i = 0; i < numBooks; i++) {
+    const fakeBook = populateFakeBooks();
+    const insertQuery = 'INSERT INTO mi_keyspace.books (id, nombre, summary, dateOfPublication, numberOfSales) VALUES (?, ?, ?, ?, ?)';
+
+    client.execute(insertQuery, [fakeBook.id, fakeBook.nombre, fakeBook.summary, fakeBook.dateOfPublication, fakeBook.numberOfSales], { prepare: true }, (err) => {
+      if (err) {
+        console.error('No se agregó libro:', err);
+      } 
+    });
+  }
+}
+
 // ------------------------------
 // Crear Tablas ----------------------------------------
 // Crea la tabla "usuarios" si no existe en el keyspace
