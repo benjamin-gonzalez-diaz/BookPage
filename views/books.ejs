@@ -31,6 +31,7 @@
       <th>Resumen</th>
       <th>Fecha de Publicación</th>
       <th>Número de Ventas</th>
+      <th>id del autor</th>
       <th>Acciones</th>
     </tr>
     <% books.forEach(book => { %>
@@ -40,6 +41,7 @@
         <td><%= book.summary %></td>
         <td><%= book.dateofpublication %></td>
         <td><%= book.numberofsales %></td>
+        <td><%= book.author %></td>
         <td>
           <form method="post" action="/books/<%= book.id %>">
             <input type="text" name="nombre" value="<%= book.nombre %>">
@@ -62,6 +64,7 @@
     fecha de publicacion:
     <input type="date" name="dateOfPublication" placeholder="Fecha de Publicación">
     <input type="number" name="numberOfSales" placeholder="Número de Ventas">
+    <!--<input type="number" name="authorID" placeholder="Id del autor"> -->
     <button type="submit">Agregar</button>
   </form>
 </body>

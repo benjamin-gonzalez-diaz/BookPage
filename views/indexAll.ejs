@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tabla de Autores</title>
+</head>
+
+<body>
+  <table>
+    <style>
+      table {
+        border-collapse: collapse;
+        width: 100%;
+      }
+      th, td {
+        border: 1px solid black;
+        padding: 8px;
+        text-align: left;
+      }
+      th {
+        background-color: #f2f2f2;
+      }
+    </style>
+    <tr>
+      <th>Nombre del autor</th>
+      <th>Nombre del libro</th>
+      <th>number of published books</th>
+      <th>average score</th>
+      <th>total sales</th>
+    </tr>
+    <% Authors.forEach(user => { %>
+      <tr>
+        <td><%= user.nombre %></td>
+        <td>
+          <% 
+            const authorBooks = books.filter(book => book.author === user.id);
+            let book_count = 0;
+            authorBooks.forEach(book => {
+              book_count++;
+          %>
+            <%= book.nombre %><br>
+          <% }); %>
+          
+        </td>
+        <td><strong>Total: <%= book_count %> libros</strong></td>
+        <td>  
+          <% 
+            const authorReviews = reviews.filter(review => authorBooks.some(book => book.id === review.book));
+            if (authorReviews.length > 0) { 
+              let totalScore = 0;
+              authorReviews.forEach(review => { 
+                totalScore += review.score;
+              });
+              const averageScore = (totalScore / authorReviews.length).toFixed(2);
+              %>
+              <%= averageScore %>
+          <% } else { %>
+              N/A
+          <% } %>
+        </td>
+        <td>
+          <% 
+            const authorSales = books.filter(book => book.author === user.id);
+            let totalSales = 0; // Variable para almacenar el total de ventas
+        
+            authorSales.forEach(book => {
+              totalSales += book.numberofsales; // Sumar las ventas del libro al total
+          %>
+          <% }); %>
+          <strong><%= totalSales %></strong>
+        </td>
+        
+      </tr>
+    <% }); %>
+  </table>
+</body>
+
+</html>
+<% books.forEach(book => { %>
+    <td><%= book.numberofsales %></td>
+<% }); %>

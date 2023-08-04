@@ -252,13 +252,6 @@ CREATE TABLE IF NOT EXISTS mi_keyspace.authorbooks (
 )
 `;
 
-const createTableAuthorsXBooks= `
-CREATE TABLE IF NOT EXISTS mi_keyspace.authorsxbooks (
-  id int PRIMARY KEY,
-  id_Authors int,
-  id_books int,
-)
-`;
 // ----------------------------------------------
 // coneccion con tablas --------------------------
 client.execute(createTableQueryUsuarios, (err) => {
@@ -317,27 +310,34 @@ client.execute(createTableQueryUsuarios, (err) => {
 });
 
 // -------------------------------------------
-// Get y Post -------------------------------------
-// Ruta para crear un nuevo usuario (Ejemplo)
-// app.post('/usuarios2', (req, res) => {
-//   const { id, nombre } = req.body;
-
-//   const insertQuery = `
-//     INSERT INTO usuarios2 (id, nombre)
-//     VALUES (?, ?)
-//   `;
-
-//   client.execute(insertQuery, [id, nombre], { prepare: true }, (err) => {
-//     if (err) {
-//       console.error('Error al crear el usuario:', err);
-//       res.status(500).send('Error al crear el usuario');
-//     } else {
-//       console.log('Usuario creado exitosamente');
-//       res.status(201).send('Usuario creado exitosamente');
-//     }
-//   });
-// });
 // CRUD EJEMPLO
+// Ruta para obtener datos de ambas tablas y mostrarlos en una página
+app.get('/indexAll', (req, res) => {
+  const selectAuthorsQuery = 'SELECT * FROM mi_keyspace.authors';
+  const selectBooksQuery = 'SELECT * FROM mi_keyspace.books';
+  const selectReviewQuery = 'SELECT * FROM mi_keyspace.reviews';
+  const selectSalesByYearQuery = 'SELECT * FROM mi_keyspace.salesbyyear';
+
+  // Ejecutar ambas consultas en paralelo
+  Promise.all([
+    client.execute(selectAuthorsQuery, [], { prepare: true }),
+    client.execute(selectBooksQuery, [], { prepare: true }),
+    client.execute(selectReviewQuery, [], { prepare: true }),
+    client.execute(selectSalesByYearQuery, [], { prepare: true })
+  ])
+  .then(([authorsResult, booksResult, reviewResult, salesbyyearResult]) => {
+    res.render('indexAll', { 
+      Authors: authorsResult.rows, 
+      books: booksResult.rows, 
+      reviews: reviewResult.rows,
+      sales: salesbyyearResult.rows
+     });
+  })
+  .catch((err) => {
+    console.error('Error al obtener datos:', err);
+    res.status(500).send('Error al obtener datos');
+  });
+});
 // Ruta para mostrar todos los usuarios
 app.get('/usuarios2', (req, res) => {
   const selectQuery = 'SELECT * FROM mi_keyspace.usuarios2';
@@ -485,11 +485,12 @@ app.post('/books', (req, res) => {
   const bookName = req.body.nombre;
   const summary = req.body.summary;
   const dateOfPublication = req.body.dateOfPublication;
+  const authorID = 2; //parseInt(req.body.author);
   const numberOfSales = parseInt(req.body.numberOfSales);
 
-  const insertQuery = 'INSERT INTO mi_keyspace.books (id, nombre, summary, dateOfPublication, numberOfSales) VALUES (?, ?, ?, ?, ?)';
+  const insertQuery = 'INSERT INTO mi_keyspace.books (id, nombre, summary, dateOfPublication, numberOfSales, author) VALUES (?, ?, ?, ?, ?, ?)';
 
-  client.execute(insertQuery, [bookId, bookName, summary, dateOfPublication, numberOfSales], { prepare: true }, (err) => {
+  client.execute(insertQuery, [bookId, bookName, summary, dateOfPublication, numberOfSales, authorID], { prepare: true }, (err) => {
     if (err) {
       console.error('Error al agregar el libro:', err);
       res.status(500).send('Error al agregar el libro');
@@ -498,6 +499,7 @@ app.post('/books', (req, res) => {
     }
   });
 });
+
 // Ruta para eliminar un libro
 app.post('/books/:id/delete', (req, res) => {
   const bookId = parseInt(req.params.id);
