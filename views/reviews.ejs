@@ -58,10 +58,10 @@
   <form method="post" action="/reviews">
     <input type="text" name="book" placeholder="Libro">
     <input type="text" name="review" placeholder="Reseña">
-    <input type="number" name="score" placeholder="Puntuación">
+    <input type="number" name="score" placeholder="Puntuación" min="1" max="5"> <!-- Agregar min y max aquí -->
     <input type="number" name="numberOfVotes" placeholder="Número de Votos">
     <button type="submit">Agregar</button>
-  </form>
+  </form>  
 </body>
 
 </html>
