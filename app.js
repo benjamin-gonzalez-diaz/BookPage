@@ -49,6 +49,18 @@ const createKeyspaceQuery = `
   }
 `;
 
+const createTableQueryAuthorSummary = `
+CREATE TABLE IF NOT EXISTS mi_keyspace.author_summary (
+  author_id int,
+  author_name TEXT,
+  num_books int,
+  total_score int,
+  total_reviews int,
+  PRIMARY KEY (author_id)
+)
+`;
+
+
 client.execute(createKeyspaceQuery, (err) => {
   if (err) {
     console.error('Error al crear el keyspace:', err);
@@ -113,9 +125,9 @@ function populateFakeSales(saleId,bookId,year){
 }
 
 function populateData() {
-  const numAuthors = 1;
+  const numAuthors = 3;
   for(let authorId= 0; authorId< numAuthors;authorId++){
-
+    let totalBooks = 0;
     const fakeAuthor = populateFakeAuthors(authorId);
     const insertQuery = 'INSERT INTO mi_keyspace.authors (id, nombre, dateOfBirth, country, shortDescription) VALUES (?, ?, ?, ?, ?)';
     client.execute(insertQuery, [fakeAuthor.id, fakeAuthor.nombre, fakeAuthor.dateOfBirth, fakeAuthor.country, fakeAuthor.shortDescription], { prepare: true }, (err) => {
@@ -159,15 +171,21 @@ function populateData() {
         });
         saleId++;
       }
-    
+      totalBooks++;
     }
-    
+    const insertQueryTable = 'INSERT INTO mi_keyspace.authorbooks (author_id, author_name, total_books, average_score) VALUES (?, ?, ?, ?)'
+    console.log(fakeAuthor.name);
+    client.execute(insertQueryTable, [fakeAuthor.id, fakeAuthor.name, totalBooks, 0], { prepare: true }, (err) => {
+      if (err) {
+        console.error('No se agregó a la tabla:', err);
+      } 
+    });
   }
 
 }
 
 // ------------------------------
-// Crear Tablas ----------------------------------------
+// Crear Tablas ------ß----------------------------------
 // Crea la tabla "usuarios" si no existe en el keyspace
 const createTableQueryUsuarios = `
   CREATE TABLE IF NOT EXISTS mi_keyspace.usuarios (
@@ -225,6 +243,15 @@ CREATE TABLE IF NOT EXISTS mi_keyspace.salesbyyear (
 )
 `;
 
+const createTableQueryAuthorBooks= `
+CREATE TABLE IF NOT EXISTS mi_keyspace.authorbooks (
+  author_id int PRIMARY KEY,
+  author_name TEXT,
+  total_books int,
+  average_score int,
+)
+`;
+
 const createTableAuthorsXBooks= `
 CREATE TABLE IF NOT EXISTS mi_keyspace.authorsxbooks (
   id int PRIMARY KEY,
@@ -276,6 +303,13 @@ client.execute(createTableQueryUsuarios, (err) => {
         console.error('Error al crear la tabla Sales_By_Year:', err);
       } else {
         console.log('Tabla Sales_By_Year creada o ya existente');
+      }
+    });
+    client.execute(createTableQueryAuthorBooks, (err) => {
+      if (err) {
+        console.error('Error al crear la tabla AuthorBooks:', err);
+      } else {
+        console.log('Tabla AuthorBooks creada o ya existente');
       }
     });
   }
@@ -639,6 +673,29 @@ app.post('/salesbyyear/:id', (req, res) => {
     }
   });
 });
+
+
+
+app.get('/authors_books', (req, res) => {
+  const selectAuthorsQuery = `
+    SELECT * FROM mi_keyspace.authorbooks
+  `;
+
+  // Realizar la consulta a la base de datos usando tu cliente de Cassandra
+  client.execute(selectAuthorsQuery, [], { prepare: true }, (err, result) => {
+    if (err) {
+      console.error('Error al obtener los datos de autores y libros:', err);
+      // Manejar el error si es necesario
+      res.render('error', { message: 'Error al obtener los datos de autores y libros' });
+    } else {
+      // Pasar los resultados obtenidos a la vista
+      const authorsBooks = result.rows;
+      res.render('authors_books', { authorsBooks });
+    }
+  });
+});
+
+
 
 // Ruta para servir el archivo index.html
 app.get('/', (req, res) => {

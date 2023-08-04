@@ -1,0 +1,20 @@
+doctype html
+html
+  head
+    title Autores y sus libros
+  body
+    h1 Autores y sus libros
+    table
+      tr
+        th Author ID
+        th Nombre del Autor
+        th Book ID
+        th Nombre del Libro
+        // Agrega más columnas aquí si lo necesitas
+      each authorBook in authorsBooks
+        tr
+          td= authorBook.author_id
+          td= authorBook.author_name
+          td= authorBook.book_id
+          td= authorBook.book_name
+          // Agrega más columnas aquí si lo necesitas

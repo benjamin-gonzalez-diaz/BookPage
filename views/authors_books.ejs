@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Autores y sus libros</title>
+</head>
+<body>
+  <h1>Autores y sus libros</h1>
+  <table>
+    <tr>
+      <th>Author ID</th>
+      <th>Nombre del Autor</th>
+      <th>Book ID</th>
+      <th>Nombre del Libro</th>
+      <!-- Agrega más columnas aquí si lo necesitas -->
+    </tr>
+    <% authorsBooks.forEach(authorBook => { %>
+      <tr>
+        <td><%= authorBook.author_id %></td>
+        <td><%= authorBook.author_name %></td>
+        <td><%= authorBook.book_id %></td>
+        <td><%= authorBook.book_name %></td>
+        <!-- Agrega más columnas aquí si lo necesitas -->
+      </tr>
+    <% }); %>
+  </table>
+</body>
+</html>
