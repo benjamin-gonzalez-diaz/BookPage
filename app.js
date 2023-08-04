@@ -25,6 +25,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 let authorIdCounter = 1000;
 let bookIdCounter = 2000;
+let reviewIdCounter = 3000;
 
 // Configura la conexión a Cassandra
 const client = new cassandra.Client({ 
@@ -80,6 +81,7 @@ function populateFakeBooks() {
     numberOfSales: Math.floor(Math.random() * 1000) + 1,
   };
 }
+
 
 function populateData() {
   const numAuthors = 10;
@@ -143,14 +145,16 @@ CREATE TABLE IF NOT EXISTS mi_keyspace.books (
   nombre TEXT,
   summary TEXT,
   dateOfPublication TEXT,
-  numberOfSales int
+  numberOfSales int,
+  author int, 
+
 )
 `;
 
 const createTableQueryReviews = `
 CREATE TABLE IF NOT EXISTS mi_keyspace.reviews (
   id int PRIMARY KEY,
-  book TEXT,
+  book int,
   review TEXT,
   score int,
   numberOfVotes int
