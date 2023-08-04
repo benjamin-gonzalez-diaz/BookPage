@@ -6,7 +6,7 @@ const path = require('path');
 const bodyParser = require('body-parser');
 const { v4: uuidv4 } = require('uuid'); 
 const faker = require('faker');
-
+const moment = require('moment');
 const app = express();
 const port = 3000;
 
@@ -23,9 +23,8 @@ app.set('views', './views');
 // Configuración para servir archivos estáticos desde la carpeta "public"
 app.use(express.static(path.join(__dirname, 'public')));
 
-let authorIdCounter = 1000;
-let bookIdCounter = 2000;
-let reviewIdCounter = 3000;
+let saleId = 1000;
+
 
 // Configura la conexión a Cassandra
 const client = new cassandra.Client({ 
@@ -56,14 +55,14 @@ client.execute(createKeyspaceQuery, (err) => {
   } else {
     console.log('Keyspace creado o ya existente');
 
-    populateData(); //apenas arranca el programa se llena la data
+    
   }
 });
 
 // Función para llenar la base de datos con authors
-function populateFakeAuthors() {
+function populateFakeAuthors(id) {
   return {
-    id: authorIdCounter++,
+    id: id,
     nombre: faker.name.findName(),
     dateOfBirth: faker.date.past().toISOString().split('T')[0],
     country: faker.address.country(),
@@ -72,42 +71,99 @@ function populateFakeAuthors() {
 }
 
 // Función para llenar la base de datos con books
-function populateFakeBooks() {
+function populateFakeBooks(bookId,authorId,authorBirth) {
+  //se selecciona al azar una fecha que estè entre la fecha de nacimiento del autor y el dìa actual
+  const currentDate = new Date();
+  const birthDate = new Date(authorBirth);
+  const timeDifference = Math.abs(currentDate.getTime() - birthDate.getTime());
+  const diffDays = Math.ceil(timeDifference / (1000*3600*24));
+
+  const randomSelect = Math.floor(Math.random() * diffDays) + 1;
+  const randomDate = new Date(birthDate.getTime()+randomSelect * (1000*3600*24));
+  
+
   return {
-    id: bookIdCounter++,
+    id: bookId,
     nombre: faker.lorem.words(),
     summary: faker.lorem.paragraph(),
-    dateOfPublication: faker.date.past().toISOString().split('T')[0],
+    dateOfPublication: randomDate.toISOString().split('T')[0],
     numberOfSales: Math.floor(Math.random() * 1000) + 1,
+    author: authorId,
   };
 }
 
+function populateFakeReviews(reviewId, bookId){
+
+  return {
+    id: reviewId,
+    book: bookId,
+    review: faker.lorem.paragraph(),
+    score: Math.floor(Math.random() *5)+1,
+    numberofVotes: Math.floor(Math.random()*1000)+1,
+  }
+}
+
+function populateFakeSales(saleId,bookId,year){
+  return{
+    id: saleId,
+    book:bookId,
+    year:year,
+    sales:Math.floor(Math.random()*1000)+1,
+  }
+}
 
 function populateData() {
-  const numAuthors = 10;
-  const numBooks = 10;
+  const numAuthors = 1;
+  for(let authorId= 0; authorId< numAuthors;authorId++){
 
-  for (let i = 0; i < numAuthors; i++) {
-    const fakeAuthor = populateFakeAuthors();
+    const fakeAuthor = populateFakeAuthors(authorId);
     const insertQuery = 'INSERT INTO mi_keyspace.authors (id, nombre, dateOfBirth, country, shortDescription) VALUES (?, ?, ?, ?, ?)';
-
     client.execute(insertQuery, [fakeAuthor.id, fakeAuthor.nombre, fakeAuthor.dateOfBirth, fakeAuthor.country, fakeAuthor.shortDescription], { prepare: true }, (err) => {
       if (err) {
         console.error('No se agregó autor:', err);
       } 
     });
+
+    for(let bookId = 0; bookId< Math.random(1,5); bookId++){
+
+      const fakeBook = populateFakeBooks(bookId,authorId, fakeAuthor.dateOfBirth);
+     
+      const insertQuery = 'INSERT INTO mi_keyspace.books (id, nombre, summary, dateOfPublication, numberOfSales, author) VALUES (?, ?, ?, ?, ?, ?)';
+      client.execute(insertQuery, [fakeBook.id, fakeBook.nombre, fakeBook.summary, fakeBook.dateOfPublication, fakeBook.numberOfSales, fakeBook.author], { prepare: true }, (err) => {
+        if (err) {
+          console.error('No se agregó libro:', err);
+        } 
+      });
+
+      for(let reviewId = 0;reviewId <Math.random(1,5);reviewId++){
+
+        const fakeReview = populateFakeReviews(reviewId,fakeBook.id);
+        const insertQuery = 'INSERT INTO mi_keyspace.reviews (id, book, review, score, numberOfVotes) VALUES (?, ?, ?, ?, ?)';
+        client.execute(insertQuery, [fakeReview.id, fakeReview.book, fakeReview.review, fakeReview.score, fakeReview.numberofVotes], { prepare: true }, (err) => {
+          if (err) {
+            console.error('No se agregó review:', err);
+          } 
+        });
+      }
+      const currentDate = new Date();
+      const currentYear = currentDate.getFullYear();
+      const bookYear = parseInt(fakeBook.dateOfPublication.slice(0, 4));
+      for(let counter = bookYear;counter<currentYear+1;counter++){
+
+        const fakeSale = populateFakeSales(saleId,bookId,counter);
+        const insertQuery = 'INSERT INTO mi_keyspace.salesbyyear (id, book, year, sales) VALUES (?, ?, ?, ?)'
+        client.execute(insertQuery, [fakeSale.id, fakeSale.book, fakeSale.year, fakeSale.sales], { prepare: true }, (err) => {
+          if (err) {
+            console.error('No se agregó sale:', err);
+          } 
+        });
+        saleId++;
+      }
+    
+    }
+    
   }
 
-  for (let i = 0; i < numBooks; i++) {
-    const fakeBook = populateFakeBooks();
-    const insertQuery = 'INSERT INTO mi_keyspace.books (id, nombre, summary, dateOfPublication, numberOfSales) VALUES (?, ?, ?, ?, ?)';
-
-    client.execute(insertQuery, [fakeBook.id, fakeBook.nombre, fakeBook.summary, fakeBook.dateOfPublication, fakeBook.numberOfSales], { prepare: true }, (err) => {
-      if (err) {
-        console.error('No se agregó libro:', err);
-      } 
-    });
-  }
 }
 
 // ------------------------------
@@ -147,7 +203,6 @@ CREATE TABLE IF NOT EXISTS mi_keyspace.books (
   dateOfPublication TEXT,
   numberOfSales int,
   author int, 
-
 )
 `;
 
@@ -164,8 +219,8 @@ CREATE TABLE IF NOT EXISTS mi_keyspace.reviews (
 const createTableQuerySalesByYear= `
 CREATE TABLE IF NOT EXISTS mi_keyspace.salesbyyear (
   id int PRIMARY KEY,
-  book TEXT,
-  year TEXT,
+  book int,
+  year int,
   sales int
 )
 `;
@@ -224,6 +279,7 @@ client.execute(createTableQueryUsuarios, (err) => {
       }
     });
   }
+  populateData(); //apenas arranca el programa se llena la data
 });
 
 // -------------------------------------------

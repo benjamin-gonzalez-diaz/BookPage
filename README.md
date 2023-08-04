@@ -40,6 +40,7 @@ para detener cassandra:
 
 # librerìa para fake data
 npm install express faker
+npm install faker moment
 
 # acuerdese 
 
