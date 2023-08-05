@@ -8,6 +8,7 @@ const book = require("./routes/book");
 const review = require("./routes/review");
 const sale = require("./routes/sale");
 const authorbook = require("./routes/author_book");
+const topbook = require("./routes/topbook");
 
 const port = 3000;
 
@@ -23,6 +24,7 @@ app.use("/books", book);
 app.use("/reviews", review);
 app.use("/salesbyyear", sale);
 app.use("/authors_books", authorbook);
+app.use("/topbook", topbook)
 
 app.listen(port, () => {
   console.log(
