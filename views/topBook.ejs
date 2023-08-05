@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>top 50 selling books of all time</title>
+</head>
+
+<body>
+  <table>
+    <style>
+      table {
+        border-collapse: collapse;
+        width: 100%;
+      }
+
+      th, td {
+        border: 1px solid black;
+        padding: 8px;
+        text-align: left;
+      }
+
+      th {
+        background-color: #f2f2f2;
+      }
+    </style>
+    <tr>
+        <th>libro</th>
+        <th>ventas totales de libros</th>
+        <th>ventas totales del autor</th>
+        <th>el libro estuvo entre <br>los 5 más vendidos<br>el año de su publicación</th>
+    </tr>
+    <tr>
+
+    </tr>
+  </table>
+</body>
+
+</html>
+<% books.forEach(book => { %>
+      <td><%= book.id %></td>
+      <td><%= book.nombre %></td>
+      <td><%= book.summary %></td>
+      <td><%= book.dateofpublication %></td>
+      <td><%= book.numberofsales %></td>
+      <td><%= book.author %></td>
+  <% }); %>
+
+  <% sales.forEach(sale => { %>
+    <td><%= sale.id %></td>
+    <td><%= sale.book %></td>
+    <td><%= sale.year %></td>
+    <td><%= sale.sales %></td>
+<% }); %>

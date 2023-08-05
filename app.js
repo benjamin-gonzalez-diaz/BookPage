@@ -129,7 +129,7 @@ function populateFakeSales(saleId,bookId,year){
 let allBookId = 0;
 
 function populateData() {
- const numAuthors = 5;
+ const numAuthors = 31;
  for(let authorId= 0; authorId< numAuthors;authorId++){
  totalBooks = 0;
  const fakeAuthor = populateFakeAuthors(authorId);
@@ -368,6 +368,30 @@ app.get('/indexAll', (req, res) => {
       Authors: authorsResult.rows, 
       books: booksResult.rows, 
       reviews: reviewResult.rows,
+      sales: salesbyyearResult.rows
+     });
+  })
+  .catch((err) => {
+    console.error('Error al obtener datos:', err);
+    res.status(500).send('Error al obtener datos');
+  });
+});
+// top books
+app.get('/topbook', (req, res) => {
+  const selectAuthorsQuery = 'SELECT * FROM mi_keyspace.authors';
+  const selectBooksQuery = 'SELECT * FROM mi_keyspace.books';
+  const selectSalesByYearQuery = 'SELECT * FROM mi_keyspace.salesbyyear';
+
+  // Ejecutar ambas consultas en paralelo
+  Promise.all([
+    client.execute(selectAuthorsQuery, [], { prepare: true }),
+    client.execute(selectBooksQuery, [], { prepare: true }),
+    client.execute(selectSalesByYearQuery, [], { prepare: true })
+  ])
+  .then(([authorsResult, booksResult, salesbyyearResult]) => {
+    res.render('topBook', { 
+      Authors: authorsResult.rows, 
+      books: booksResult.rows, 
       sales: salesbyyearResult.rows
      });
   })

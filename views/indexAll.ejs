@@ -35,14 +35,15 @@
       <tr>
         <td><%= user.nombre %></td>
         <td>
-          <% 
-            const authorBooks = books.filter(book => book.author === user.id);
-            let book_count = 0;
-            authorBooks.forEach(book => {
-              book_count++;
-          %>
-            <%= book.nombre %><br>
-          <% }); %>
+
+            <% 
+              const authorBooks = books.filter(book => book.author === user.id);
+              let book_count = 0;
+              authorBooks.forEach((book, index) => {
+                book_count++;
+            %>
+              <li><%= (index + 1) + '. ' + book.nombre %></li>
+            <% }); %>
           
         </td>
         <td><strong>Total: <%= book_count %> libros</strong></td>
