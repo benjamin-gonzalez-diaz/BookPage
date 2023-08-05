@@ -26,4 +26,5 @@ router.get('/', (req, res) => {
       res.status(500).send('Error al obtener datos');
     });
   });
+  
 module.exports = router
