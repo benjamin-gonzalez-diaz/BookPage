@@ -25,5 +25,7 @@ app.use("/salesbyyear", sale);
 app.use("/authors_books", authorbook);
 
 app.listen(port, () => {
-  console.log(`Servidor Express.js escuchando en el puerto ${port}`);
+  console.log(
+    `Servidor Express.js escuchando en el puerto ${port}\nPuede acceder en http://localhost:${port}/`
+  );
 });
