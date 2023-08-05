@@ -8,8 +8,14 @@
 </head>
 
 <body>
-  <table>
+  <table id="myTable">
+    <input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search for word from resume...">
     <style>
+      input#myInput {
+        width: 618px;
+        height: 100px;
+        font-size: 20px;
+      }
       table {
         border-collapse: collapse;
         width: 100%;
@@ -70,3 +76,36 @@
 </body>
 
 </html>
+<script>
+  function myFunction() {
+    // Declare variables
+    var input, filter, table, tr, td, i, txtValue;
+    input = document.getElementById("myInput");
+    filter = input.value.toUpperCase();
+    filterWords = filter.split(" ");
+    table = document.getElementById("myTable");
+    tr = table.getElementsByTagName("tr");
+  
+    // Loop through all table rows, and hide those who don't match the search query
+    for (i = 0; i < tr.length; i++) {
+      td = tr[i].getElementsByTagName("td")[2];
+      if (td) {
+        txtValue = td.textContent || td.innerText;
+        words = txtValue.toUpperCase().split(" ");
+        
+        // filterWords.map((fword) => {
+        //   words.indexOf(fword) !== -1
+        // })
+        isResult = (       
+          filterWords.map((fword) => {
+          return words.indexOf(fword) !== -1
+        })).every(Boolean)
+        if (isResult) {
+          tr[i].style.display = "";
+        } else {
+          tr[i].style.display = "none";
+        }
+      }
+    }
+  }
+  </script>
