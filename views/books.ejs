@@ -8,6 +8,22 @@
 </head>
 
 <body>
+  agregar libro
+  <form method="post" action="/books">
+    <input type="text" name="nombre" placeholder="Nombre del libro">
+    <input type="text" name="summary" placeholder="Resumen">
+    fecha de publicacion:
+    <input type="date" name="dateOfPublication" placeholder="Fecha de Publicación">
+    <input type="number" name="numberOfSales" placeholder="Número de Ventas">
+    <td>
+      <select name="author">
+        <% Authors.sort((a, b) => a.id - b.id).forEach(user => { %>
+          <option value="<%= user.id %>"><%= user.nombre %></option>
+        <% }); %>
+      </select>
+    </td>
+    <button type="submit">Agregar</button>
+  </form>
   <table id="myTable">
     <input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search for word from resume...">
     <style>
@@ -44,6 +60,7 @@
       <tr>
         
         <td><%= book.nombre %></td>
+
         <td><%= book.summary %></td>
         <td><%= book.dateofpublication %></td>
         <td><%= book.numberofsales %></td>
@@ -64,15 +81,7 @@
       </tr>
     <% }); %>
   </table>
-  <form method="post" action="/books">
-    <input type="text" name="nombre" placeholder="Nombre">
-    <input type="text" name="summary" placeholder="Resumen">
-    fecha de publicacion:
-    <input type="date" name="dateOfPublication" placeholder="Fecha de Publicación">
-    <input type="number" name="numberOfSales" placeholder="Número de Ventas">
-    <!--<input type="number" name="authorID" placeholder="Id del autor"> -->
-    <button type="submit">Agregar</button>
-  </form>
+
 </body>
 
 </html>

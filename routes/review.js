@@ -6,16 +6,24 @@ let router = express.Router();
 router
   .route("/")
   .get((req, res) => {
-    const selectQuery = "SELECT * FROM reviews";
-
-    cassandraClient.execute(selectQuery, [], (err, result) => {
-      if (err) {
-        console.error("Error al obtener las reseñas:", err);
-        res.status(500).send("Error al obtener las reseñas");
-      } else {
-        res.render("reviews", { reviews: result.rows });
-      }
-    });
+    const selectBooksQuery = "SELECT * FROM books";
+    const selectReviewQuery = "SELECT * FROM reviews";
+  
+    // Ejecutar ambas consultas en paralelo
+    Promise.all([
+      cassandraClient.execute(selectReviewQuery, [], { prepare: true }),
+      cassandraClient.execute(selectBooksQuery, [], { prepare: true }),
+    ])
+      .then(([reviewResult, booksResult]) => {
+        res.render("reviews", {
+          reviews: reviewResult.rows,
+          books: booksResult.rows,
+        });
+      })
+      .catch((err) => {
+        console.error("Error al obtener datos:", err);
+        res.status(500).send("Error al obtener datos");
+      });
   })
   .post((req, res) => {
     console.log(req.body);

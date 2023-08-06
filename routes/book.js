@@ -6,16 +6,24 @@ let router = express.Router();
 router
   .route("/")
   .get((req, res) => {
-    const selectQuery = "SELECT * FROM books";
-
-    cassandraClient.execute(selectQuery, [], (err, result) => {
-      if (err) {
-        console.error("Error al obtener los libros:", err);
-        res.status(500).send("Error al obtener los libros");
-      } else {
-        res.render("books", { books: result.rows });
-      }
-    });
+    const selectAuthorsQuery = "SELECT * FROM authors";
+    const selectBooksQuery = "SELECT * FROM books";
+  
+    // Ejecutar ambas consultas en paralelo
+    Promise.all([
+      cassandraClient.execute(selectAuthorsQuery, [], { prepare: true }),
+      cassandraClient.execute(selectBooksQuery, [], { prepare: true }),
+    ])
+      .then(([authorsResult, booksResult]) => {
+        res.render("books", {
+          Authors: authorsResult.rows,
+          books: booksResult.rows,
+        });
+      })
+      .catch((err) => {
+        console.error("Error al obtener datos:", err);
+        res.status(500).send("Error al obtener datos");
+      });
   })
   .post((req, res) => {
     console.log(req.body);
@@ -24,13 +32,14 @@ router
     const summary = req.body.summary;
     const dateOfPublication = req.body.dateOfPublication;
     const numberOfSales = parseInt(req.body.numberOfSales);
+    const author = parseInt(req.body.author);
 
     const insertQuery =
-      "INSERT INTO books (id, nombre, summary, dateOfPublication, numberOfSales) VALUES (?, ?, ?, ?, ?)";
+      "INSERT INTO books (id, nombre, summary, dateOfPublication, numberOfSales, author) VALUES (?, ?, ?, ?, ?, ?)";
 
     cassandraClient.execute(
       insertQuery,
-      [bookId, bookName, summary, dateOfPublication, numberOfSales],
+      [bookId, bookName, summary, dateOfPublication, numberOfSales, author],
       { prepare: true },
       (err) => {
         if (err) {
