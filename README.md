@@ -111,3 +111,16 @@ agregar Reviews:
 agregar Books:
 
     curl -X POST -H "Content-Type: application/json" -d '{"id": 2, "nombre": "Nombre del libro", "summary": "Resumen del libro", "dateOfPublication": "Fecha de publicación", "numberOfSales": 100}' http://localhost:3000/books
+
+
+# navegacion
+
+http://localhost:3000/table1 --> index, tabla que muestra los autores y la cantidad de libros asociado a este
+http://localhost:3000/books --> books, con buscador
+http://localhost:3000/authors/ --> autores
+http://localhost:3000/Reviews --> reviews
+http://localhost:3000/salesbyyear --> ventas por año
+http://localhost:3000/topbook --> top 50 libros mas vendidos
+http://localhost:3000/authors_books --> otra tabla similar al index
+
+tambien en el app2.js se pueden ver las distintas url

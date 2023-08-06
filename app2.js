@@ -9,6 +9,7 @@ const review = require("./routes/review");
 const sale = require("./routes/sale");
 const authorbook = require("./routes/author_book");
 const topbook = require("./routes/topbook");
+const urlIndex = require("./routes/urlindex")
 
 const port = 3000;
 
@@ -18,13 +19,14 @@ app.use(bodyParser.json());
 app.set("view engine", "ejs");
 app.set("views", "./views");
 
-app.use("/", index);
+app.use("/table1", index);
 app.use("/authors", author);
 app.use("/books", book);
 app.use("/reviews", review);
 app.use("/salesbyyear", sale);
 app.use("/authors_books", authorbook);
 app.use("/topbook", topbook)
+app.use("/", urlIndex)
 
 app.listen(port, () => {
   console.log(

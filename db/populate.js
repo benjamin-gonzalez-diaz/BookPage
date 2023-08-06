@@ -58,7 +58,7 @@ let allBookId = 0;
 function populateData(client) {
   let allBookId = 1000;
   let saleId = 100;
-  const numAuthors = 5;
+  const numAuthors = 50;
   for (let authorId = 0; authorId < numAuthors; authorId++) {
     totalBooks = 0;
     const fakeAuthor = populateFakeAuthors(authorId);

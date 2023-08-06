@@ -4,9 +4,9 @@ let router = express.Router();
 
 // top books
 router.get('/', (req, res) => {
-    const selectAuthorsQuery = 'SELECT * FROM mi_keyspace.authors';
-    const selectBooksQuery = 'SELECT * FROM mi_keyspace.books';
-    const selectSalesByYearQuery = 'SELECT * FROM mi_keyspace.salesbyyear';
+    const selectAuthorsQuery = 'SELECT * FROM ks15.authors';
+    const selectBooksQuery = 'SELECT * FROM ks15.books';
+    const selectSalesByYearQuery = 'SELECT * FROM ks15.salesbyyear';
   
     // Ejecutar ambas consultas en paralelo
     Promise.all([
