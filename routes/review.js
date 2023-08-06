@@ -1,4 +1,5 @@
 const cassandraClient = require("../db/connection");
+const { getLastId } = require("../utils");
 let express = require("express");
 let router = express.Router();
 
@@ -19,7 +20,7 @@ router
   })
   .post((req, res) => {
     console.log(req.body);
-    const reviewId = Math.floor(Math.random() * 9000) + 1;
+    const reviewId = getLastId(cassandraClient, "reviews") + 1;
     const book = req.body.book;
     const review = req.body.review;
     const score = parseInt(req.body.score);
@@ -73,14 +74,14 @@ router.route("/:id").post((req, res) => {
 router.route("/:id/delete").post((req, res) => {
   const bookId = parseInt(req.params.id);
 
-  const deleteQuery = "DELETE FROM books WHERE id = ?";
+  const deleteQuery = "DELETE FROM reviews WHERE id = ?";
 
   cassandraClient.execute(deleteQuery, [bookId], { prepare: true }, (err) => {
     if (err) {
       console.error("Error al eliminar el review:", err);
       res.status(500).send("Error al eliminar el review");
     } else {
-      res.redirect("/books");
+      res.redirect("/reviews");
     }
   });
 });

@@ -1,4 +1,7 @@
 const express = require("express");
+const { populateData } = require("./db/populate");
+
+populateData();
 
 const app = express();
 const bodyParser = require("body-parser");
@@ -24,7 +27,7 @@ app.use("/books", book);
 app.use("/reviews", review);
 app.use("/salesbyyear", sale);
 app.use("/authors_books", authorbook);
-app.use("/topbook", topbook)
+app.use("/topbook", topbook);
 
 app.listen(port, () => {
   console.log(

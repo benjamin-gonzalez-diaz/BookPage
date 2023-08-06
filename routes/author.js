@@ -1,4 +1,5 @@
 const cassandraClient = require("../db/connection");
+const { getLastId } = require("../utils");
 let express = require("express");
 let router = express.Router();
 
@@ -24,7 +25,7 @@ router
     const country = req.body.country;
     const shortDescription = req.body.shortDescription;
 
-    const authorId = Math.floor(Math.random() * 9000) + 1;
+    const authorId = getLastId(cassandraClient, "authors") + 1;
 
     const insertQuery =
       "INSERT INTO authors (id, nombre, dateOfBirth, country, shortDescription) VALUES (?, ?, ?, ?, ?)";

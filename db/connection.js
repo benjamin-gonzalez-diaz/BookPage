@@ -15,7 +15,7 @@ const query_array = [
   cSalesByYear,
 ];
 
-const keyspace = "ks15";
+const keyspace = "ks16";
 
 const client = new cassandra.Client({
   contactPoints: ["localhost"],

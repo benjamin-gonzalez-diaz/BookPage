@@ -1,4 +1,5 @@
 const cassandraClient = require("../db/connection");
+const { getLastId } = require("../utils");
 let express = require("express");
 let router = express.Router();
 
@@ -19,7 +20,7 @@ router
   })
   .post((req, res) => {
     console.log(req.body);
-    const bookId = Math.floor(Math.random() * 9000) + 1;
+    const bookId = getLastId(cassandraClient, "books") + 1;
     const bookName = req.body.nombre;
     const summary = req.body.summary;
     const dateOfPublication = req.body.dateOfPublication;
