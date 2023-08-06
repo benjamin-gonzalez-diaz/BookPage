@@ -10,6 +10,7 @@ const sale = require("./routes/sale");
 const authorbook = require("./routes/author_book");
 const topbook = require("./routes/topbook");
 const urlIndex = require("./routes/urlindex")
+const topReview = require("./routes/topReview")
 
 const port = 3000;
 
@@ -27,6 +28,8 @@ app.use("/salesbyyear", sale);
 app.use("/authors_books", authorbook);
 app.use("/topbook", topbook)
 app.use("/", urlIndex)
+app.use("/topReview", topReview)
+
 
 app.listen(port, () => {
   console.log(

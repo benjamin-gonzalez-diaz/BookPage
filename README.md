@@ -94,6 +94,8 @@ si le sale esto:
 
 es que ya esta correcto
 
+
+
 # para agregar nuevos datos en la tabla (momentaneo)
 
 agregar sales:
@@ -115,12 +117,9 @@ agregar Books:
 
 # navegacion
 
-http://localhost:3000/table1 --> index, tabla que muestra los autores y la cantidad de libros asociado a este
-http://localhost:3000/books --> books, con buscador
-http://localhost:3000/authors/ --> autores
-http://localhost:3000/Reviews --> reviews
-http://localhost:3000/salesbyyear --> ventas por año
-http://localhost:3000/topbook --> top 50 libros mas vendidos
-http://localhost:3000/authors_books --> otra tabla similar al index
+esta en el :
+
+    http://localhost:3000/
 
 tambien en el app2.js se pueden ver las distintas url
+

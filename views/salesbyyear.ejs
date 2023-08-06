@@ -8,6 +8,16 @@
 </head>
 
 <body>
+  <form method="post" action="/salesbyyear">
+    <select name="book">
+      <% books.sort((a, b) => a.id - b.id).forEach(book => { %>
+        <option value="<%= book.id %>"><%= book.nombre %></option>
+      <% }); %>
+    </select>
+    <input type="date" name="year" placeholder="Año">
+    <input type="number" name="sales" placeholder="Ventas">
+    <button type="submit">Agregar</button>
+  </form>
   <table>
     <style>
       table {
@@ -32,15 +42,22 @@
       <th>Ventas</th>
       <th>Acciones</th>
     </tr>
-    <% sales.forEach(sale => { %>
+    <% sales.forEach(sale => {
+      // Buscar el libro asociado a la venta actual
+      const book = books.find(book => book.id === sale.book);
+    %>
       <tr>
         <td><%= sale.id %></td>
-        <td><%= sale.book %></td>
+        <td><%= book ? book.nombre : 'Desconocido' %></td>
         <td><%= sale.year %></td>
         <td><%= sale.sales %></td>
         <td>
           <form method="post" action="/salesbyyear/<%= sale.id %>">
-            <input type="text" name="book" value="<%= sale.book %>">
+            <select name="book">
+              <% books.sort((a, b) => a.id - b.id).forEach(book => { %>
+                <option value="<%= book.id %>"><%= book.nombre %></option>
+              <% }); %>
+            </select>
             <input type="date" name="year" value="<%= sale.year %>">
             <input type="number" name="sales" value="<%= sale.sales %>">
             <button type="submit">Actualizar</button>
@@ -52,12 +69,6 @@
       </tr>
     <% }); %>
   </table>
-  <form method="post" action="/salesbyyear">
-    <input type="text" name="book" placeholder="Libro">
-    <input type="date" name="year" placeholder="Año">
-    <input type="number" name="sales" placeholder="Ventas">
-    <button type="submit">Agregar</button>
-  </form>
 </body>
 
 </html>

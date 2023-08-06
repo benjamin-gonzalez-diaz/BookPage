@@ -7,21 +7,29 @@ router
   .route("/")
   .get((req, res) => {
     const selectQuery = "SELECT * FROM salesbyyear";
-
-    cassandraClient.execute(selectQuery, [], (err, result) => {
-      if (err) {
-        console.error("Error al obtener las ventas por año:", err);
-        res.status(500).send("Error al obtener las ventas por año");
-      } else {
-        res.render("salesbyyear", { sales: result.rows });
-      }
-    });
+    const selectBooksQuery = "SELECT * FROM books";
+  
+    // Ejecutar ambas consultas en paralelo
+    Promise.all([
+      cassandraClient.execute(selectQuery, [], { prepare: true }),
+      cassandraClient.execute(selectBooksQuery, [], { prepare: true }),
+    ])
+      .then(([saleResult, booksResult]) => {
+        res.render("salesbyyear", {
+          sales: saleResult.rows,
+          books: booksResult.rows,
+        });
+      })
+      .catch((err) => {
+        console.error("Error al obtener datos:", err);
+        res.status(500).send("Error al obtener datos");
+      });
   })
   .post((req, res) => {
     console.log(req.body);
     const saleId = Math.floor(Math.random() * 9000) + 1;
     const book = req.body.book;
-    const year = req.body.year;
+    const year = new Date(req.body.year).getFullYear();
     const sales = parseInt(req.body.sales);
 
     const insertQuery =
@@ -46,7 +54,7 @@ router
 router.route("/:id").post((req, res) => {
   const saleId = parseInt(req.params.id);
   const book = req.body.book;
-  const year = req.body.year;
+  const year = new Date(req.body.year).getFullYear();
   const sales = parseInt(req.body.sales);
 
   const updateQuery =

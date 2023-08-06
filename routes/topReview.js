@@ -45,13 +45,15 @@ const getBookNames = (topBooks) => {
   return new Promise((resolve, reject) => {
     const query = "SELECT id, nombre FROM books";
 
-    client.execute(query, [], (err, result) => {
+    cassandraClient.execute(query, [], (err, result) => {
       if (err) {
         reject(err);
       } else {
         const bookNames = result.rows;
-
+        
         const enrichedBooks = topBooks.map((book) => {
+
+          
           const name = bookNames.find((bN) => bN.id == book.bookId).nombre;
 
           return {
@@ -84,7 +86,8 @@ router.route("/").get((req, res) => {
     } else {
       getTop(result)
         .then((enrichedTopBooks) => {
-          res.render("reviews", { topBooks: enrichedTopBooks });
+          console.log(enrichedTopBooks)
+          res.render("topReview", { topBooks: enrichedTopBooks });
         })
         .catch((err) => {
           console.error("Error getting top books", err);
@@ -103,7 +106,8 @@ router.route("/worst").get((req, res) => {
     } else {
       getTop(result, false)
         .then((enrichedTopBooks) => {
-          res.render("reviews", { topBooks: enrichedTopBooks });
+          console.log(enrichedTopBooks)
+          res.render("topReview", { topBooks: enrichedTopBooks });
         })
         .catch((err) => {
           console.error("Error getting top books", err);
@@ -111,3 +115,5 @@ router.route("/worst").get((req, res) => {
     }
   });
 });
+
+module.exports = router

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tabla de Autores</title>
+</head>
+
+<body>
+  <table>
+    <style>
+      table {
+        border-collapse: collapse;
+        width: 100%;
+      }
+      th, td {
+        border: 1px solid black;
+        padding: 8px;
+        text-align: left;
+      }
+      th {
+        background-color: #f2f2f2;
+      }
+    </style>
+    <tr>
+      <th>Nombre del libro</th>
+      <th>votos totales</th>
+      <th>promedio score</th>
+    </tr>
+    <% topBooks.forEach(topBook => { %>
+      <tr>
+        <td><%= topBook.name %></td>
+        <td><%= topBook.sumVotes %></td>
+        <td><%= topBook.avgScore %></td>
+      </tr>
+    <% }); %>
+  </table>
+
+  
+</body>
+
+</html>
