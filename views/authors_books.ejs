@@ -2,38 +2,125 @@
 <html>
 <head>
   <title>Autores y sus libros</title>
+  <style>
+    table {
+      border-collapse: collapse;
+      width: 100%;
+    }
+    th, td {
+      border: 1px solid black;
+      padding: 8px;
+      text-align: left;
+    }
+    th {
+      background-color: #f2f2f2;
+    }
+    .sort-button {
+      cursor: pointer;
+    }
+  </style>
 </head>
 <body>
   <h1>Autores y sus libros</h1>
   <table>
-    <style>
-      table {
-        border-collapse: collapse;
-        width: 100%;
-      }
-      th, td {
-        border: 1px solid black;
-        padding: 8px;
-        text-align: left;
-      }
-      th {
-        background-color: #f2f2f2;
-      }
-    </style>
-    <tr>
-      <th>Nombre del Autor</th>
-      <th>Total Books</th>
-      <th>Promedio Score</th>
-      <!-- Agrega más columnas aquí si lo necesitas -->
-    </tr>
-    <% authorsBooks.forEach(authorBook => { %>
+    
+    <thead>
       <tr>
-        <td><%= authorBook.author_name %></td>
-        <td><%= authorBook.total_books%></td>
-        <td><%= authorBook.average_score / authorBook.total_books %></td>
-        <!-- Agrega más columnas aquí si lo necesitas -->
+        <th>Nombre del Autor</th>
+        <th>Total Books</th>
+        <th>Promedio Score</th>
       </tr>
-    <% }); %>
+      <tr>
+        <th>
+          <input type="text" id="filterInput0" onkeyup="filterTable(0)" placeholder="Filter..">
+          <button class="sort-button" onclick="sortTable(0)">▲</button>
+          <button class="sort-button" onclick="sortTable(0, true)">▼</button>
+        </th>
+        <th>
+          <input type="text" id="filterInput1" onkeyup="filterTable(1)" placeholder="Filter..">
+          <button class="sort-button" onclick="sortTable(1)">▲</button>
+          <button class="sort-button" onclick="sortTable(1, true)">▼</button>
+        </th>
+        <th>
+          <input type="text" id="filterInput2" onkeyup="filterTable(2)" placeholder="Filter..">
+          <button class="sort-button" onclick="sortTable(2)">▲</button>
+          <button class="sort-button" onclick="sortTable(2, true)">▼</button>
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <% authorsBooks.forEach(authorBook => { %>
+        <tr>
+          <td><%= authorBook.author_name %></td>
+          <td><%= authorBook.total_books %></td>
+          <td><%= authorBook.average_score %></td>
+        </tr>
+      <% }); %>
+    </tbody>
   </table>
+
+  <script>
+    let sortColumn = -1;
+    let sortMultiplier = 1;
+
+    function compareRows(row1, row2) {
+      const value1 = row1.cells[sortColumn].textContent.trim();
+      const value2 = row2.cells[sortColumn].textContent.trim();
+
+      if (sortColumn === 0) {
+        return value1.localeCompare(value2) * sortMultiplier;
+      } else {
+        const num1 = parseFloat(value1);
+        const num2 = parseFloat(value2);
+        
+        if (!isNaN(num1) && !isNaN(num2)) {
+          return (num1 - num2) * sortMultiplier;
+        } else {
+              //string comparison
+          return value1.localeCompare(value2) * sortMultiplier;
+        }
+      }
+    }
+
+    function sortTable(column) {
+      const table = document.querySelector('table');
+      const tbody = table.querySelector('tbody');
+      const rows = Array.from(tbody.querySelectorAll('tr'));
+      const headerRow = table.querySelector('thead tr'); 
+
+      if (sortColumn === column) {
+        sortMultiplier *= -1;
+      } else {
+        sortColumn = column;
+        sortMultiplier = 1;
+      }
+
+      rows.sort(compareRows);
+
+      tbody.innerHTML = ''; 
+      rows.forEach(row => tbody.appendChild(row));
+      table.querySelector('thead').appendChild(headerRow);
+    }
+
+    function filterTable(column) {
+          let input, filter, table, tr, td, i;
+          input = document.getElementById("filterInput" + column);
+          filter = input.value.toLowerCase();
+          table = document.getElementsByTagName("table")[0];
+          tr = table.getElementsByTagName("tr");
+
+          for (i = 1; i < tr.length; i++) {
+            td = tr[i].getElementsByTagName("td")[column];
+            if (td) {
+              if (td.textContent.toLowerCase().indexOf(filter) > -1) {
+                tr[i].style.display = "";
+              } else {
+                tr[i].style.display = "none";
+              }
+            }
+          }
+        }
+
+  </script>
 </body>
 </html>
