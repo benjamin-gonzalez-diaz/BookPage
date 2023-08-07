@@ -79,16 +79,16 @@ router.route("/:id").post((req, res) => {
 
 /**Este router elimina un review */
 router.route("/:id/delete").post((req, res) => {
-  const bookId = parseInt(req.params.id);
+  
+  const reviewId = req.params.id;
+  const deleteQuery = "DELETE FROM reviews WHERE id = ?";
 
-  const deleteQuery = "DELETE FROM books WHERE id = ?";
-
-  cassandraClient.execute(deleteQuery, [bookId], { prepare: true }, (err) => {
+  cassandraClient.execute(deleteQuery, [reviewId], { prepare: true }, (err) => {
     if (err) {
       console.error("Error al eliminar el review:", err);
       res.status(500).send("Error al eliminar el review");
     } else {
-      res.redirect("/books");
+      res.redirect("/reviews");
     }
   });
 });

@@ -56,7 +56,7 @@ function populateFakeSales(saleId, bookId, year) {
 let allBookId = 0;
 
 function populateData(client) {
-  let allBookId = 1000;
+  let allBookId = 1;
   let saleId = 100;
   const numAuthors = 50;
   for (let authorId = 0; authorId < numAuthors; authorId++) {

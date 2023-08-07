@@ -8,6 +8,14 @@
 </head>
 
 <body>
+  <form method="post" action="/authors">
+    <input type="text" name="nombre" placeholder="Nombre">
+    dia de nacimiento
+    <input type="date" name="dateOfBirth" placeholder="Dia de Nacimiento">
+    <input type="text" name="country" placeholder="Pais de Origen">
+    <textarea name="shortDescription" placeholder="Descripción breve del autor" rows="4"></textarea>
+    <button type="submit">Agregar</button>
+  </form>
   <table>
     <style>
       table {
@@ -39,7 +47,7 @@
         <td>
           <form method="post" action="/authors/<%= user.id %>">
             <input type="text" name="nombre" value="<%= user.nombre %>">
-            <input type="text" name="dateOfBirth" value="<%= user.dateofbirth %>">
+            <input type="date" name="dateOfBirth" value="<%= user.dateofbirth %>">
             <input type="text" name="country" value="<%= user.country %>">
             <textarea name="shortDescription"><%= user.shortdescription %></textarea>
             <button type="submit">Actualizar</button>
@@ -51,13 +59,7 @@
       </tr>
     <% }); %>
   </table>
-  <form method="post" action="/authors">
-    <input type="text" name="nombre" placeholder="Nombre">
-    <input type="text" name="dateOfBirth" placeholder="Dia de Nacimiento">
-    <input type="text" name="country" placeholder="Pais de Origen">
-    <textarea name="shortDescription" placeholder="Descripción breve del autor" rows="4"></textarea>
-    <button type="submit">Agregar</button>
-  </form>
+
   
 </body>
 

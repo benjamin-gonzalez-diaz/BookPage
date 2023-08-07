@@ -9,6 +9,7 @@
 
 <body>
   <form method="post" action="/reviews">
+    libros
     <select name="book">
       <% books.sort((a, b) => a.id - b.id).forEach(book => { %>
         <option value="<%= book.id %>"><%= book.nombre %></option>
@@ -44,18 +45,20 @@
       <th>Número de Votos</th>
       <th>Acciones</th>
     </tr>
-    <% reviews.forEach(review => { %>
+    <% reviews.forEach(review => { 
+      const book = books.find(book => book.id === review.book);
+      %>
       <tr>
         <td><%= review.id %></td>
-        <td><%= review.book %></td>
+        <td><%= book ? book.nombre : 'Desconocido' %></td>
         <td><%= review.review %></td>
         <td><%= review.score %></td>
         <td><%= review.numberofvotes %></td>
         <td>
           <form method="post" action="/reviews/<%= review.id %>">
-            <input type="text" name="book" value="<%= review.book %>">
+            <!--<input type="text" name="book" value="<%= review.book %>">-->
             <input type="text" name="review" value="<%= review.review %>">
-            <input type="number" name="score" value="<%= review.score %>">
+            <input type="number" name="score" value="<%= review.score %>"min="1" max="5">
             <input type="number" name="numberOfVotes" value="<%= review.numberofvotes %>">
             <button type="submit">Actualizar</button>
           </form>
