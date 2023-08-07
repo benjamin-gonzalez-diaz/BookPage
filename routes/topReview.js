@@ -36,9 +36,9 @@ const bookStats = (groupedReviews) => {
 
 const topBooks = (bookStats, bookSize, best = true) => {
   return bookStats
-    .sort((a, b) => (best ? 1 : -1) * b.avgScore - a.avgScore)
+    .sort((a, b) => (best ? 1 : -1) * (b.avgScore - a.avgScore))
     .slice(0, bookSize < 10 ? bookSize : 10)
-    .sort((a, b) => (best ? 1 : -1) * b.sumVotes - a.sumVotes);
+    .sort((a, b) => (best ? 1 : -1) * (b.sumVotes - a.sumVotes));
 };
 
 const getBookNames = (topBooks) => {
@@ -86,7 +86,6 @@ router.route("/").get((req, res) => {
     } else {
       getTop(result)
         .then((enrichedTopBooks) => {
-          console.log(enrichedTopBooks)
           res.render("topReview", { topBooks: enrichedTopBooks });
         })
         .catch((err) => {
@@ -106,7 +105,6 @@ router.route("/worst").get((req, res) => {
     } else {
       getTop(result, false)
         .then((enrichedTopBooks) => {
-          console.log(enrichedTopBooks)
           res.render("topReview", { topBooks: enrichedTopBooks });
         })
         .catch((err) => {
