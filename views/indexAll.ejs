@@ -29,11 +29,22 @@
       }
     </style>
     <tr>
-      <th onclick="sortTable(0)">Nombre del autor</th>
-      <th onclick="sortTable(1)">libros</th>
-      <th onclick="sortTable(2)">number of published books</th>
-      <th onclick="sortTable(3)">average score</th>
-      <th onclick="sortTable(4)">total sales</th>
+      <th onclick="sortTable(0)">
+        Nombre del autor
+        <input type="text" id="filterInput0" onkeyup="filterTable(0)" placeholder="Filter..">
+      </th>
+      <th onclick="sortTable(1)">libros
+        <input type="text" id="filterInput1" onkeyup="filterTable(1)" placeholder="Filter..">
+      </th>
+      <th onclick="sortTable(2)">number of published books
+        <input type="text" id="filterInput2" onkeyup="filterTable(2)" placeholder="Filter..">
+      </th>
+      <th onclick="sortTable(3)">average score
+        <input type="text" id="filterInput3" onkeyup="filterTable(3)" placeholder="Filter..">
+      </th>
+      <th onclick="sortTable(4)">total sales
+        <input type="text" id="filterInput4" onkeyup="filterTable(4)" placeholder="Filter..">
+      </th>
     </tr>
     <% Authors.forEach(user => { %>
       <tr>
@@ -164,4 +175,22 @@
       }
     }
   }
+  function filterTable(column) {
+          let input, filter, table, tr, td, i;
+          input = document.getElementById("filterInput" + column);
+          filter = input.value.toLowerCase();
+          table = document.getElementsByTagName("table")[0];
+          tr = table.getElementsByTagName("tr");
+
+          for (i = 1; i < tr.length; i++) {
+            td = tr[i].getElementsByTagName("td")[column];
+            if (td) {
+              if (td.textContent.toLowerCase().indexOf(filter) > -1) {
+                tr[i].style.display = "";
+              } else {
+                tr[i].style.display = "none";
+              }
+            }
+          }
+        }
   </script>

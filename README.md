@@ -49,9 +49,9 @@ de que en el app.js debe estar el: const cassandra = require('cassandra-driver')
 sino instalelo con el npm install cassandra-drive (o algo asi)
 
 # para activar la pagina web
- debe ejecutar el siguiente comando en donde este el app.js (dentro del proyecto):
+ debe ejecutar el siguiente comando en donde este el app2.js (dentro del proyecto):
 
-    node app.js
+    node app2.js
 
 # para agregar un keyspace:
 

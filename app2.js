@@ -20,7 +20,7 @@ app.use(bodyParser.json());
 app.set("view engine", "ejs");
 app.set("views", "./views");
 
-app.use("/table1", index);
+app.use("/Author_Stats_Table", index);
 app.use("/authors", author);
 app.use("/books", book);
 app.use("/reviews", review);
