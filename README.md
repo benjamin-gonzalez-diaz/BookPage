@@ -44,7 +44,7 @@ npm install faker moment
 
 # acuerdese 
 
-de que en el app.js debe estar el: const cassandra = require('cassandra-driver'); 
+de que en el app.js  y el app2.js debe estar el: const cassandra = require('cassandra-driver'); 
 
 sino instalelo con el npm install cassandra-drive (o algo asi)
 
@@ -117,7 +117,7 @@ agregar Books:
 
 # navegacion
 
-esta en el :
+esta en el (en forma de tabla):
 
     http://localhost:3000/
 

@@ -53,10 +53,11 @@ router
 /**Este router agarra un venta por año individual y lo actualiza */
 router.route("/:id").post((req, res) => {
   const saleId = parseInt(req.params.id);
-  const book = req.body.book;
+  const book = parseInt(req.body.book);
+  
   const year = new Date(req.body.year).getFullYear();
   const sales = parseInt(req.body.sales);
-
+  console.log(year)
   const updateQuery =
     "UPDATE salesbyyear SET book = ?, year = ?, sales = ? WHERE id = ?";
 
