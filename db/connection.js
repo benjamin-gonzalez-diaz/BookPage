@@ -5,8 +5,6 @@ const cReviewTable = require("./tables/CReviewTable");
 const cAuthorBooksQuery = require("./tables/CQueryAuthorBooks");
 const cSalesByYear = require("./tables/CSaleByYearTable");
 
-const { populateData } = require("./populate");
-
 const query_array = [
   cAuthorQuery,
   cBookQuery,
@@ -15,11 +13,14 @@ const query_array = [
   cSalesByYear,
 ];
 
-const keyspace = "ks15";
+const keyspace = "ks5";
 
 const client = new cassandra.Client({
   contactPoints: ["localhost"],
   localDataCenter: "datacenter1",
+  pooling: {
+    maxRequestsPerConnection: 99999999,
+  },
 });
 
 const createKeyspaceQuery = `
@@ -61,7 +62,6 @@ client.connect((err) => {
         Promise.all(promises)
           .then(() => {
             console.log("All tables created successfully");
-            populateData(client);
           })
           .catch((err) => {
             console.log("Error executing queries:", err);

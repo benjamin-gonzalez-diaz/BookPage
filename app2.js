@@ -9,8 +9,9 @@ const review = require("./routes/review");
 const sale = require("./routes/sale");
 const authorbook = require("./routes/author_book");
 const topbook = require("./routes/topbook");
-const urlIndex = require("./routes/urlindex")
-const topReview = require("./routes/topReview")
+const urlIndex = require("./routes/urlindex");
+const topReview = require("./routes/topReview");
+const populate = require("./routes/populate");
 
 const port = 3000;
 
@@ -26,10 +27,10 @@ app.use("/books", book);
 app.use("/reviews", review);
 app.use("/salesbyyear", sale);
 app.use("/authors_books", authorbook);
-app.use("/topbook", topbook)
-app.use("/", urlIndex)
-app.use("/topReview", topReview)
-
+app.use("/topbook", topbook);
+app.use("/", urlIndex);
+app.use("/topReview", topReview);
+app.use("/populate", populate);
 
 app.listen(port, () => {
   console.log(
