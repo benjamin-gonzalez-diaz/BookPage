@@ -123,3 +123,19 @@ esta en el (en forma de tabla):
 
 tambien en el app2.js se pueden ver las distintas url
 
+
+#  Nota
+
+si quiere llenar otro keyspace debera ir al archivo:
+
+    BookPage/db/connection.js
+
+y cambiar esta variable:
+
+    const keyspace = "ks96";
+
+por otra, por ejemplo:
+
+    const keyspace = "ks50";
+
+es muy probable que en la pagina salesbyyear, se quede cargando mucho rato (tiene aproximadamente 1700 datos), por lo que o puede esperar o cancelar la carga de la pagina. del CRUD, el create se muestra cuando se termina de cargar la pagina, pero como se demora bastante es probable que no se note

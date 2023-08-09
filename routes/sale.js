@@ -26,7 +26,7 @@ router
       });
   })
   .post((req, res) => {
-    console.log(req.body);
+
     const saleId = Math.floor(Math.random() * 9000) + 1;
     const book = req.body.book;
     const year = new Date(req.body.year).getFullYear();
