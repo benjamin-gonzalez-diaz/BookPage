@@ -122,6 +122,11 @@ esta en el (en forma de tabla):
     http://localhost:3000/
 
 tambien en el app2.js se pueden ver las distintas url
+si se quiere poblar las tablas debe hacer click en:
+
+     http://localhost:3000/populate 
+
+y esperar unos segundos para que se llenen bien
 
 
 #  Nota
