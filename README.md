@@ -138,7 +138,7 @@ por otra, por ejemplo:
 
     const keyspace = "ks50";
 
-es muy probable que en la pagina salesbyyear, se quede cargando mucho rato (tiene aproximadamente 1700 datos), por lo que o puede esperar o cancelar la carga de la pagina. del CRUD, el create se muestra cuando se termina de cargar la pagina, pero como se demora bastante es probable que no se note
+es muy probable que en la pagina salesbyyear, se quede cargando mucho rato (tiene aproximadamente 1700 datos), por lo que o puede esperar o cancelar la carga de la pagina (que seria lo mejor). del CRUD, el create se muestra cuando se termina de cargar la pagina, pero como se demora bastante es probable que no se note
 
 tambien puede verificar metiendose a la interfaz de cassandra con el siguiente comando:
 
