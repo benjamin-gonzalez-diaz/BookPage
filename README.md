@@ -96,11 +96,11 @@ es que ya esta correcto
 
 
 
-# para agregar nuevos datos en la tabla (momentaneo)
+# para agregar nuevos datos en la tabla (por terminal)
 
 agregar sales:
 
-    curl -X POST -H "Content-Type: application/json" -d '{"id": 2, "book": "Nombre del libro", "year": "2023", "sales": 100}' http://localhost:3000/sales
+    curl -X POST -H "Content-Type: application/json" -d '{"id": 2, "book": "Nombre del libro", "year": "2023", "sales": 100}' http://localhost:3000/salesbyyear
 
 agregar Authors:
 
@@ -139,3 +139,52 @@ por otra, por ejemplo:
     const keyspace = "ks50";
 
 es muy probable que en la pagina salesbyyear, se quede cargando mucho rato (tiene aproximadamente 1700 datos), por lo que o puede esperar o cancelar la carga de la pagina. del CRUD, el create se muestra cuando se termina de cargar la pagina, pero como se demora bastante es probable que no se note
+
+tambien puede verificar metiendose a la interfaz de cassandra con el siguiente comando:
+
+    cqlsh
+
+o:
+
+    python3 -m cqlsh
+
+y aqui ver si se agrego bien 
+
+#  errores:
+
+si es que sale este error:
+
+    error creating Author table: ResponseError: No keyspace has been specified. USE a keyspace, or explicitly specify keyspace.tablename
+    Error executing queries: ResponseError: No keyspace has been specified. USE a keyspace, or explicitly specify keyspace.tablename
+        at FrameReader.readError (/home/ubuntudelete/Escritorio/software architecture/Express respaldo/BookPage/node_modules/cassandra-driver/lib/readers.js:389:17)
+        at Parser.parseBody (/home/ubuntudelete/Escritorio/software architecture/Express respaldo/BookPage/node_modules/cassandra-driver/lib/streams.js:209:66)
+        at Parser._transform (/home/ubuntudelete/Escritorio/software architecture/Express respaldo/BookPage/node_modules/cassandra-driver/lib/streams.js:152:10)
+        at Parser.Transform._read (_stream_transform.js:191:10)
+        at Parser.Transform._write (_stream_transform.js:179:12)
+        at doWrite (_stream_writable.js:403:12)
+        at writeOrBuffer (_stream_writable.js:387:5)
+        at Parser.Writable.write (_stream_writable.js:318:11)
+        at Protocol.ondata (_stream_readable.js:718:22)
+        at Protocol.emit (events.js:314:20) {
+    info: 'Represents an error message from the server',
+    code: 8704,
+    coordinator: '127.0.0.1:9042',
+    query: '\n' +
+        '    CREATE TABLE IF NOT EXISTS authors (\n' +
+        '        id int PRIMARY KEY,\n' +
+        '        nombre TEXT,\n' +
+        '        dateOfBirth TEXT,\n' +
+        '        country TEXT,\n' +
+        '        shortDescription TEXT,\n' +
+        '    )\n' +
+        '    '
+    }
+    error creating SalesByYear table: ResponseError: No keyspace has been specified. USE a keyspace, or explicitly specify keyspace.tablename
+    error creating authorbooks table: ResponseError: No keyspace has been specified. USE a keyspace, or explicitly specify keyspace.tablename
+    error creating Reviews table: ResponseError: No keyspace has been specified. USE a keyspace, or explicitly specify keyspace.tablename
+
+vuelva a usar el comando:
+
+    node app2.js
+
+ya que se esta intentando cargar las tablas antes de crearlas o rellenarlas
