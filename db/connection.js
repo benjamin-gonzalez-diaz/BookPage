@@ -13,13 +13,13 @@ const query_array = [
   cSalesByYear,
 ];
 
-const keyspace = "ks96";
+const keyspace = process.env.KEYSPACE || "ks96";
 
 const client = new cassandra.Client({
-  contactPoints: ["localhost"],
-  localDataCenter: "datacenter1",
+  contactPoints: [process.env.CONTACT_POINTS || "localhost"],
+  localDataCenter: process.env.LOCAL_DATA_CENTER || "datacenter1",
   pooling: {
-    maxRequestsPerConnection: 99999999,
+    maxRequestsPerConnection: parseInt(process.env.MAX_REQUESTS_PER_CONNECTION) || 99999999,
   },
 });
 
