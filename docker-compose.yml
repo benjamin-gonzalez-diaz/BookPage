@@ -1,0 +1,30 @@
+version: "3.8"
+
+services:
+
+  cassandra:
+    restart: always
+    build:
+      context: .
+      dockerfile: ./dockerfiles/db/Dockerfile
+    image: cassandra
+    container_name: cassandra
+    networks:
+      - cassandra-net
+
+  book_app:
+    restart: always
+    build:
+      context: .
+      dockerfile: ./dockerfiles/app/Dockerfile
+    image: bookapp
+    ports:
+      - "3000:3000" 
+    container_name: book_app
+    networks:
+      - cassandra-net
+    depends_on:
+      - cassandra
+
+networks:
+  cassandra-net:

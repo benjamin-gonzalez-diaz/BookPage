@@ -2,30 +2,18 @@
 Tarea1 Software Architecture Universidad de los andes (chile)
 
 # Instalacion usando Docker
-> Create a Network
-+ Create a Docker network for communication between containers:
+> Armar las imagenes
 
-    `docker network create cassandra-net`
++ `docker compose build`
 
-> Setting up the Cassandra Container:
+> Correr las imagenes
 
-+ Pull the Cassandra image from Docker Hub:
++ `docker compose up`
 
-    `docker pull cassandra`
+> Manera recomendada de correrlo
 
-+ Run the Cassandra container, exposing port 9042:
-
-    `docker run --name cassandra --network cassandra-net -d cassandra`
-
-> Setting up the Node.js Application Container:
-
-+ Build the Docker image for your Node.js application:
-
-    `docker build -t bookapp .`
-
-> Run the application container, connecting it to the Cassandra container and the Docker network (wait for the cassandra to finish loading):
-
-`docker run -p 3000:3000 --name book_app --network cassandra-net -d bookapp`
++ `docker compose up cassandra -d` -> Esperar hasta que cassandra cree el role cassandra
++ `docker compose up book_app -d`
 
 
 # acuerdese de instalar las dependencia:
