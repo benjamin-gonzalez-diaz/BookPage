@@ -1,5 +1,5 @@
 # BookPage
-Tarea1 Software Architecture Universidad de los andes (chile)
+Tarea2 Software Architecture Universidad de los andes (chile)
 
 # Instalacion usando Docker
 > Armar las imagenes
@@ -15,6 +15,53 @@ Tarea1 Software Architecture Universidad de los andes (chile)
 + `docker compose up cassandra -d` -> Esperar hasta que cassandra cree el role cassandra
 + `docker compose up book_app -d`
 
+# posibles errores con docker-compose:
+si  aparece este error:
+
+    book_app   | Servidor Express.js escuchando en el puerto 3000
+    book_app   | Puede acceder en http://localhost:3000/
+    book_app   | Could't establish connection
+    book_app   | NoHostAvailableError: All host(s) tried for query failed. First host tried, 172.18.0.2:9042: Error: connect ECONNREFUSED 172.18.0.2:9042
+    book_app   |     at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1495:16) {
+    book_app   |   errno: -111,
+    book_app   |   code: 'ECONNREFUSED',
+    book_app   |   syscall: 'connect',
+    book_app   |   address: '172.18.0.2',
+    book_app   |   port: 9042
+    book_app   | }. See innerErrors.
+    book_app   |     at ControlConnection._borrowFirstConnection (/app/node_modules/cassandra-driver/lib/control-connection.js:307:15)
+    book_app   |     at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    book_app   |     at async ControlConnection._initializeConnection (/app/node_modules/cassandra-driver/lib/control-connection.js:526:7)
+    book_app   |     at async ControlConnection.init (/app/node_modules/cassandra-driver/lib/control-connection.js:212:5)
+    book_app   |     at async Client._connect (/app/node_modules/cassandra-driver/lib/client.js:513:5) {
+    book_app   |   info: 'Represents an error when a query cannot be performed because no host is available or could be reached by the driver.',
+    book_app   |   innerErrors: {
+    book_app   |     '172.18.0.2:9042': Error: connect ECONNREFUSED 172.18.0.2:9042
+    book_app   |         at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1495:16) {
+    book_app   |       errno: -111,
+    book_app   |       code: 'ECONNREFUSED',
+    book_app   |       syscall: 'connect',
+    book_app   |       address: '172.18.0.2',
+    book_app   |       port: 9042
+    book_app   |     }
+    book_app   |   }
+    book_app   | }
+
+tiene que hacer lo siguiente:
+
+    sudo docker ps -a
+
+Esto te mostrará una lista de todos los contenedores, incluido el de Cassandra. Busca el contenedor de Cassandra y toma nota de su nombre o ID.
+
+Luego, inicia el contenedor de Cassandra con el siguiente comando, reemplazando <nombre_contenedor> con el nombre o el ID del contenedor que encontraste:
+
+    sudo docker start cassandra 
+
+Una vez que hayas iniciado el contenedor de Cassandra, puedes ejecutar nuevamente el comando nodetool status para verificar el estado de Cassandra:
+
+    sudo docker exec -it cassandra nodetool status
+
+Deberías ver la información sobre los nodos de Cassandra y su estado. Si Cassandra está funcionando correctamente, tu aplicación Docker debería poder conectarse a ella sin problemas.
 
 # acuerdese de instalar las dependencia:
 npm install
