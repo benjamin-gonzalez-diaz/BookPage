@@ -1,4 +1,4 @@
-version: "3.8"
+version: "3"
 
 services:
 
@@ -11,6 +11,11 @@ services:
     container_name: cassandra
     networks:
       - cassandra-net
+    healthcheck:
+      test: ["CMD", "/usr/local/bin/docker-healthcheck"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
 
   book_app:
     restart: always
@@ -25,6 +30,7 @@ services:
       - cassandra-net
     depends_on:
       - cassandra
+    command: bash -c "sleep 120 && node app.js"
 
 networks:
   cassandra-net:
