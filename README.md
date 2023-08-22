@@ -1,7 +1,7 @@
 # BookPage
 Tarea2 Software Architecture Universidad de los andes (chile)
 # ----------------------------------------------------------------------------
-# La base de datos de cassandra estara lista despues de 2 minutos, de que se haya hecho el docker-compose,
+# La base de datos de cassandra estara lista despues de 2 minutos, de que se haya hecho el docker-compose up,
 # por favor espere
 # ----------------------------------------------------------------------------
 # Instalacion usando Docker
